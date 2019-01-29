@@ -1,0 +1,13 @@
+.directory
+/.idea
+/.vscode
+/logs
+/target
+/.settings
+.classpath
+.factorypath
+.project
+hs_err*.log
+*.iml
+*.class
+

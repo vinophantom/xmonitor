@@ -24,6 +24,12 @@ public class CommonTest {
 
 
     @Test
+    public void testEquals() {
+        System.out.println(new Character('R').equals('R'));
+    }
+
+
+    @Test
     public void testTasklist() throws IOException, InterruptedException {
         InputStream in = null;
 //        String currLoadPath = this.getClass().getResource("/").getPath();
@@ -87,9 +93,49 @@ public class CommonTest {
     @Test
     public void test3() {
         Netstat netstat = new Netstat();
+        System.out.println(netstat.getUsageShort());
+        System.out.println(netstat.getSyntax());
+        System.out.println(netstat.getCommandName());
 
     }
 
+    /**
+     * 杀死进程测试
+     * @throws SigarException
+     */
+    @Test
+    public void testKill() throws SigarException {
+        Sigar sigar = new Sigar();
+        sigar.kill(25295L, 1);
+    }
+
+
+    /**
+     * 获取当前ip
+     * @throws SigarException
+     */
+    @Test
+    public void testGetFQDN() throws SigarException {
+        Sigar sigar = new Sigar();
+        System.out.println(sigar.getFQDN());
+        
+    }
+
+    @Test
+    public void testWho() throws SigarException {
+        Sigar sigar = new Sigar();
+        Who[] whos = sigar.getWhoList();
+        System.out.println(whos);
+    }
+
+    @Test
+    public void testPs() throws SigarException {
+        Sigar sigar = new Sigar();
+        Uptime uptime = sigar.getUptime();
+        System.out.println(uptime);
+
+
+    }
 
     @Test
     public void test4() throws SigarException {

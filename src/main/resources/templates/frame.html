@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 
 <!--<html class="no-js h-100" lang="en">-->
   <head>
@@ -8,12 +8,20 @@
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
     <title>Xmonitor</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link href="styles/font/all.css" rel="stylesheet">
-    <link href="styles/icon/material-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles/bootstrap/bootstrap.min.css">
-    <link rel="stylesheet" id="main-stylesheet" data-version="1.1.0" href="styles/shards-dashboards.1.1.0.min.css">
-    <link rel="stylesheet" href="styles/extras.1.1.0.min.css">
-    <script async defer src="styles/buttons.js"></script>
+    <link href="/styles/font/all.css" rel="stylesheet">
+    <link href="/styles/icon/material-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" id="main-stylesheet" data-version="1.1.0" href="/styles/shards-dashboards.1.1.0.min.css">
+    <link rel="stylesheet" href="/styles/extras.1.1.0.min.css">
+    <script async defer src="/styles/buttons.js"></script>
+    <script src="/scripts/jquery/jquery-3.3.1.min.js"></script>
+    <script src="/scripts/umd/popper.min.js"></script>
+    <script src="/scripts/bootstrap.min.js"></script>
+    <script src="/scripts/Chart.min.js"></script>
+    <script src="/scripts/shards.min.js"></script>
+    <!--<script src="/scripts/jquery/jquery.sharrre.min.js"></script>-->
+    <script src="/scripts/extras.1.1.0.min.js"></script>
+    <script src="/scripts/shards-dashboards.1.1.0.min.js"></script>
   </head>
   <body class="h-100">
     <!-- 颜色选择 -->
@@ -95,37 +103,37 @@
           <div class="nav-wrapper">
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link active" href="/">
+                <a id="dashboard-nav" class="nav-link active" href="/">
                   <i class="material-icons">dashboard</i>
                   <span>总览</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link " href="/">
+                <a id="mem-nav" class="nav-link " href="/memory">
                   <i class="material-icons">memory</i>
                   <span>CPU</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link " href="/add-new-post.html">
+                <a id="storage-nav" class="nav-link " href="/storage">
                   <i class="material-icons">folder</i>
                   <span>存储</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link " href="/form-components.html">
-                  <i class="material-icons">network_cell</i>
+                <a class="nav-link " href="/network">
+                  <i id="network-nav" class="material-icons">network_cell</i>
                   <span>网络</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link " href="/tables.html">
+                <a id="process-nav" class="nav-link " href="/process">
                   <i class="material-icons">sort</i>
                   <span>进程</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link " href="/user-profile-lite.html">
+                <a class="nav-link " href="/user">
                   <i class="material-icons">person</i>
                   <span>User Profile</span>
                 </a>
@@ -218,7 +226,7 @@
             </nav>
           </div>
           <!-- main-navbar -->
-          <div class="main-content-container container-fluid px-4">
+          <div class="main-content-container container-fluid px-4" th:utext="${content}">
 
 
             <!-- 主要内容部分 -->
@@ -260,14 +268,7 @@
         <a class="pp-cta extra-action" href="http://bit.ly/shards-dashboard-pro">Download</a>
       </div>
     </div> -->
-    <script src="scripts/jquery/jquery-3.3.1.min.js"></script>
-    <script src="scripts/umd/popper.min.js"></script>
-    <script src="scripts/bootstrap.min.js"></script>
-    <script src="scripts/Chart.min.js"></script>
-    <script src="scripts/shards.min.js"></script>
-    <!--<script src="/scripts/jquery/jquery.sharrre.min.js"></script>-->
-    <script src="scripts/extras.1.1.0.min.js"></script>
-    <script src="scripts/shards-dashboards.1.1.0.min.js"></script>
+
 
   </body>
 </html>

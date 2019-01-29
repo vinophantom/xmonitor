@@ -1,6 +1,5 @@
 package com.vino.xmonitor.bean.hardware;
 
-import jdk.management.resource.internal.TotalResourceContext;
 
 public class Cpu {
 

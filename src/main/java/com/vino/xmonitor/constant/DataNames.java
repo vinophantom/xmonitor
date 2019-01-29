@@ -18,4 +18,6 @@ public class DataNames {
 
     public final static String STORAGE_NAME = "storages";
 
+    public final static String PROCESSES_NAME = "processes";
+
 }

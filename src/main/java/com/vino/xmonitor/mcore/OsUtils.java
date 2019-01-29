@@ -4,24 +4,54 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
-import java.lang.reflect.Array;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.stream.IntStream;
 
 import com.sun.management.OperatingSystemMXBean;
 import com.vino.xmonitor.bean.NetSpeed;
 import com.vino.xmonitor.bean.hardware.Storage;
-import org.hyperic.sigar.*;
-import org.hyperic.sigar.cmd.Netstat;
+import com.vino.xmonitor.bean.soft.Process;
+import org.hyperic.sigar.Cpu;
+import org.hyperic.sigar.CpuInfo;
+import org.hyperic.sigar.CpuPerc;
+import org.hyperic.sigar.FileSystem;
+import org.hyperic.sigar.FileSystemUsage;
+import org.hyperic.sigar.Mem;
+import org.hyperic.sigar.NetConnection;
+import org.hyperic.sigar.NetFlags;
+import org.hyperic.sigar.NetInterfaceConfig;
+import org.hyperic.sigar.NetInterfaceStat;
+import org.hyperic.sigar.OperatingSystem;
+import org.hyperic.sigar.ProcCredName;
+import org.hyperic.sigar.ProcMem;
+import org.hyperic.sigar.ProcState;
+import org.hyperic.sigar.ProcTime;
+import org.hyperic.sigar.ProcUtil;
+import org.hyperic.sigar.Sigar;
+import org.hyperic.sigar.SigarException;
+import org.hyperic.sigar.SigarProxy;
+import org.hyperic.sigar.Swap;
+import org.hyperic.sigar.Who;
 import org.hyperic.sigar.cmd.Ps;
+import org.hyperic.sigar.cmd.Shell;
 
 /**
  * @author phantom
  */
 public class OsUtils {
 
+    private final static int MIN_PORT_NUMBER = 0;
+    private final static int MAX_PORT_NUMBER = 65535;
     private static long lastGetSpeedTime = System.currentTimeMillis();
 
     private static long lastTimeRxBytes = 0L;
@@ -33,14 +63,166 @@ public class OsUtils {
             (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
 
 
+    /**
+     * 判断端口可用性
+     * @param port
+     * @return
+     */
+    public static boolean isPortAvailable(int port) throws SigarException {
+        Sigar sigar = new Sigar();
+        int flags = NetFlags.CONN_TCP | NetFlags.CONN_SERVER | NetFlags.CONN_CLIENT;
+        NetConnection[] netConnectionList = sigar.getNetConnectionList(flags);
+        for (NetConnection netConnection : netConnectionList) {
+            if ( netConnection.getLocalPort() == port )
+                return false;
+        }
+        return true;
+    }
+
+
+    public static List<Process> getProcs() throws SigarException {
+        Sigar sigar = new Sigar();
+        Shell shell = new Shell();
+
+        Ps ps = new Ps();
+        long[] pids = sigar.getProcList();
+        List <Process> res = new ArrayList();
+        for(int i = 0; i < pids.length; ++i) {
+            long pid = pids[i];
+            res.add(getProcObj(sigar, pid));
+        }
+        return res;
+    }
+
+
+
+
+
+
+
+
+
+    public static Process getProcObj(SigarProxy sigar, long pid) throws SigarException {
+        ProcState state = sigar.getProcState(pid);
+        ProcTime time = null;
+        String unknown = "unkown";
+        Process p = new Process();
+        // info：Pid
+        p.setPid(pid);
+        // info：用户
+        try {
+            ProcCredName cred = sigar.getProcCredName(pid);
+            p.setUser(cred.getUser());
+        } catch (SigarException var10) {
+            p.setUser(null);
+        }
+        // info：开始时间
+        try {
+            time = sigar.getProcTime(pid);
+            p.setStartTime(new Date(time.getStartTime()));
+        } catch (SigarException var9) {
+            p.setStartTime(null);
+        }
+
+        try {
+            ProcMem mem = sigar.getProcMem(pid);
+            // info：占用内存
+            p.setMem(mem.getRss() + mem.getShare());
+            // info：所占用固定内存
+            p.setRss(mem.getRss());
+            // info：
+            p.setShare(mem.getShare());
+        } catch (SigarException var8) {
+            p.setMem(0);
+            p.setRss(0);
+            p.setShare(0);
+        }
+        // info：状态
+        /**
+         * S（-l 和 l 标志）进程或内核线程的状态：
+         *              对于进程：
+
+                        O不存在
+                        A活动
+                        W已交换
+                        I空闲（等待启动）
+                        Z已取消
+                        T已停止
+                        对于内核线程：
+
+                        O不存在
+                        R正在运行
+                        S正在休眠
+                        W已交换
+                        Z已取消
+                        T已停止
+         */
+        p.setState(state.getState());
+        if (time != null) {
+            // info：CPU 时间
+            p.setCpuTime(getCpuTime(time));
+        } else {
+            p.setCpuTime(0);
+        }
+        
+        // info：名字 
+        
+        // String name = ProcUtil.getDescription(sigar, pid);
+        p.setName(sigar.getProcArgs(pid)[0]);
+
+        double cpuUsage = sigar.getProcCpu(pid).getPercent();
+        p.setCpuUsage(cpuUsage);
+        return p;
+    }
+
+
+
+   
+    public static long getCpuTime(ProcTime time) {
+        return System.currentTimeMillis() - time.getStartTime();
+    }
+
+    private static String getStartTime(long time) {
+        if (time == 0L) {
+            return "00:00";
+        } else {
+            long timeNow = System.currentTimeMillis();
+            String fmt = "MMMd";
+            if (timeNow - time < 86400000L) {
+                fmt = "HH:mm";
+            }
+            // TODO : 改成进程安全的guava方法
+            return (new SimpleDateFormat(fmt)).format(new Date(time));
+        }
+    }
+
+
+    public static String join(List info) {
+        StringBuffer buf = new StringBuffer();
+        Iterator i = info.iterator();
+        boolean hasNext = i.hasNext();
+
+        while(hasNext) {
+            buf.append((String)i.next());
+            hasNext = i.hasNext();
+            if (hasNext) {
+                buf.append("\t");
+            }
+        }
+
+        return buf.toString();
+
+    }
+
     public static List<Storage> getStorages () throws SigarException {
         FileSystem[] fileSystems = OsHolder.getFileSystem();
         List<Storage> res  = new ArrayList<>();
 
-        Arrays.asList(fileSystems).stream().forEach(fs -> {
+        Arrays.stream(fileSystems).forEach(fs -> {
             int type = fs.getType();
             String dirName = fs.getDirName();
-            if (type == 2) {
+            // TODO
+            if (type != 5) {
                 FileSystemUsage usage = null;
                 try {
                     usage = OsHolder.getFileSystemUsageByName(dirName);
@@ -118,6 +300,7 @@ public class OsUtils {
     public static Map<String,Object> getSysInfo () throws UnknownHostException {
 
         Map<String, Object> res = new HashMap<>();
+        Sigar sigar = new Sigar();
 
         Runtime r = Runtime.getRuntime();
 
@@ -126,7 +309,7 @@ public class OsUtils {
         InetAddress addr = InetAddress.getLocalHost();
 
         String ip = addr.getHostAddress();
-
+        //
         Map<String, String> map = System.getenv();
 
 
@@ -136,10 +319,46 @@ public class OsUtils {
         res.put("currentIP", addr.getHostAddress());
         res.put("home", props.getProperty("user.home"));
         res.put("version", props.getProperty("os.version"));
-        res.put("computerName", map.get("COMPUTERNAME"));
-        res.put("user", map.get("USERNAME"));
+        res.put("computerName", getHostName());
+        res.put("user", getCurrentUser());
         return res;
     }
+
+    private static String getCurrentUser() {
+        Map<String, String> map = System.getenv();
+            if(map.get("USERNAME") != null) {
+                return map.get("USERNAME");
+            } else {
+                return map.get("LOGNAME");
+            }
+    }
+
+
+    private static String getHostNameForLiunx() {
+        try {
+            return (InetAddress.getLocalHost()).getHostName();
+        } catch (UnknownHostException uhe) {
+            String host = uhe.getMessage(); // host = "hostname: hostname"
+            if (host != null) {
+                int colon = host.indexOf(':');
+                if (colon > 0) {
+                    return host.substring(0, colon);
+                }
+            }
+            return "UnknownHost";
+        }
+    }
+
+
+    private static String getHostName() {
+        if (System.getenv("COMPUTERNAME") != null) {
+            return System.getenv("COMPUTERNAME");
+        } else {
+            return getHostNameForLiunx();
+        }
+    }
+
+
 
     public static long getProcessCpuTime () {
         return mxbean.getProcessCpuTime();
@@ -534,48 +753,48 @@ public class OsUtils {
     }
 
 
-    public static void getProcessList() {
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            Process p = runtime.exec("tasklist /v");
-            System.out.println(p);
-            BufferedReader bw = new BufferedReader(new InputStreamReader(p.getInputStream(), "gbk"));
-            String s;
-            while ((s = bw.readLine()) != null) {
-                System.out.println(s);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    // public static void getProcessList() {
+    //     Runtime runtime = Runtime.getRuntime();
+    //     try {
+    //         Process p = runtime.exec("tasklist /v");
+    //         System.out.println(p);
+    //         BufferedReader bw = new BufferedReader(new InputStreamReader(p.getInputStream(), "gbk"));
+    //         String s;
+    //         while ((s = bw.readLine()) != null) {
+    //             System.out.println(s);
+    //         }
+    //     } catch (IOException e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 
 
 
-    public static final void windowsRestart(String port, String path, String param)
-            throws IOException, InterruptedException
-    {
-        String cmd = "for /f \"tokens=5\" %a in ('netstat -ao^|findstr " + port + "') do @taskkill /F /PID %a";
-        String[] command = { "cmd", "-c", "start", cmd };
-        Process pro = Runtime.getRuntime().exec(command);
-        pro.waitFor();
-        Thread.sleep(5000L);
-        cmd = "cmd /c start " + path;
-        pro = Runtime.getRuntime().exec(cmd);
-        pro.waitFor();
-        pro.exitValue();
-    }
+    // public static final void windowsRestart(String port, String path, String param)
+    //         throws IOException, InterruptedException
+    // {
+    //     String cmd = "for /f \"tokens=5\" %a in ('netstat -ao^|findstr " + port + "') do @taskkill /F /PID %a";
+    //     String[] command = { "cmd", "-c", "start", cmd };
+    //     Process pro = Runtime.getRuntime().exec(command);
+    //     pro.waitFor();
+    //     Thread.sleep(5000L);
+    //     cmd = "cmd /c start " + path;
+    //     pro = Runtime.getRuntime().exec(cmd);
+    //     pro.waitFor();
+    //     pro.exitValue();
+    // }
 
-    public static final void linuxRestart(String port, String path, String param)
-            throws IOException, InterruptedException
-    {
-        String cmd = "kill -9 $(netstat -tlnp|grep " + port + "|awk '{print $7}'|awk -F '/' '{print $1}')";
-        String[] command = { "sh", "-c", cmd };
-        Process pro = Runtime.getRuntime().exec(command);
-        pro.waitFor();
-        cmd = path;
-        pro = Runtime.getRuntime().exec(cmd);
-        pro.waitFor();
-    }
+    // public static final void linuxRestart(String port, String path, String param)
+    //         throws IOException, InterruptedException
+    // {
+    //     String cmd = "kill -9 $(netstat -tlnp|grep " + port + "|awk '{print $7}'|awk -F '/' '{print $1}')";
+    //     String[] command = { "sh", "-c", cmd };
+    //     Process pro = Runtime.getRuntime().exec(command);
+    //     pro.waitFor();
+    //     cmd = path;
+    //     pro = Runtime.getRuntime().exec(cmd);
+    //     pro.waitFor();
+    // }
 
 
 

@@ -21,11 +21,13 @@ public class WebSocketConfig {
                                   MemService memService,
                                   SysService sysService,
                                   NetService netService,
-                                  StorageService storageService) {
+                                  StorageService storageService,
+                                  ProcessService processService) {
         DataSocketServer.cpuService = cpuService;
         DataSocketServer.memService = memService;
         DataSocketServer.sysService = sysService;
         DataSocketServer.netService = netService;
         DataSocketServer.storageService = storageService;
+        DataSocketServer.processService = processService;
     }
 }

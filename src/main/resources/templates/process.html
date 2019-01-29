@@ -1,0 +1,112 @@
+
+<style>
+    table{
+        width:45em;
+        table-layout:fixed;/* 只有定义了表格的布局算法为fixed，下面td的定义才能起作用。 */
+    }
+    td {
+        word-break: keep-all;
+        white-space:nowrap;
+        overflow:hidden;/* 内容超出宽度时隐藏超出部分的内容 */
+        text-overflow:ellipsis;/* 当对象内文本溢出时显示省略标记(...) ；需与overflow:hidden;一起使用。*/
+        text-align: left;
+    }
+
+    th {
+        text-align: left;
+    }
+    table thead tr th:last-child{
+        text-align: center;
+    }
+
+    table tr td:last-child{
+        text-align: center;
+    }
+
+    table tr td:nth-child(2) {
+        
+    }
+</style>
+
+<!-- Page Header -->
+<div class="page-header row no-gutters py-4">
+    <div class="col-12 col-sm-4 text-center text-sm-left mb-0">
+        <span class="text-uppercase page-subtitle">Process</span>
+        <h3 class="page-title">进程管理</h3>
+    </div>
+</div>
+<!-- End Page Header -->
+<!-- Default Light Table -->
+<div class="row">
+    <div class="col">
+        <div class="card card-small mb-4">
+            <div class="card-header border-bottom">
+                <h6 class="m-0">进程列表</h6>
+            </div>
+            <div class="card-body p-0 pb-3 text-center">
+                <table id="process-table" class="table mb-0">
+                    <thead class="bg-light">
+                    <tr>
+                        <th scope="col" class="border-0">Pid</th>
+                        <th scope="col" class="border-0" width="360px">名称</th>
+                        <th scope="col" class="border-0">用户</th>
+                        <!-- <th scope="col" class="border-0">状态</th> -->
+                        <th scope="col" class="border-0">CPU</th>
+                        <th scope="col" class="border-0">内存</th>
+                        <!-- <th scope="col" class="border-0">固定内存</th> -->
+                        <th scope="col" class="border-0">共享内存</th>
+                        <th scope="col" class="border-0">开始时间</th>
+                        <th scope="col" class="border-0">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="p : ${procList}">
+                        <td th:text="${p.pid}"></td>
+                        <!-- <!- h:text="${#strings.substringBefore(#strings.append(p.name, '--'),'--')}"></td> --> 
+                        <td><a th:title='${p.name}' th:href="${p.pid}" th:text="${p.name}"></a></td>
+                        <!-- <!- h:text="${#strings.abbreviate(p.name, #strings.indexOf(p.name,'--'))}"></td> --> 
+                        <td th:text="${p.user}"></td>
+                        <!-- <td th:text="${p.state}"></td> -->
+                        <td th:text="${p.cpuUsage}"></td>
+                        <td th:text="${p.mem}"></td>
+                        <!-- <!- h:text="${p.rss}"></td> -->
+                        <td th:text="${p.share}"></td>
+                        <td th:text="${p.startTime}"></td>
+                        <!-- <td th:text="${p.cpuTime}"></td> -->
+                        <td>
+                            <button type="button" class="btn btn-accent btn-pill kill-proc-btn" >结束进程</button>
+                        </td>
+                    </tr>
+                    <!-- <tr>
+                        <td>2</td>
+                        <td>Clark</td>
+                        <td>Angela</td>
+                        <td>Estonia</td>
+                        <td>Borghetto di Vara</td>
+                        <td>1-660-850-1647</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Jerry</td>
+                        <td>Nathan</td>
+                        <td>Cyprus</td>
+                        <td>Braunau am Inn</td>
+                        <td>214-4225</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Colt</td>
+                        <td>Angela</td>
+                        <td>Liberia</td>
+                        <td>Bad Hersfeld</td>
+                        <td>1-848-473-7416</td>
+                    </tr> -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/scripts/app/process.1.1.0.js"></script>

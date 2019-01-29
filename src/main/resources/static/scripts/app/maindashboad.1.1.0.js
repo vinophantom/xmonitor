@@ -1,10 +1,5 @@
-/*
- |--------------------------------------------------------------------------
- | Shards Dashboards: Blog Overview Template
- |--------------------------------------------------------------------------
- */
-'use strict';
 
+'use strict';
 
 //////////////////////////////////////////window设置仓库//////////////////////////////
 
@@ -37,7 +32,7 @@ window.chartColors = {
 
 ////////////////////////////////////////Websocket///////////////////////////////////////
 
-
+(function ($) {
 //建立Websocket连接
 let websocket = null;
 
@@ -251,7 +246,7 @@ let toPercent = function (n) {
  * @returns {number}
  */
 let byteToGib = function (n) {
-    if (isNumber(n)) return n / 1000000000;
+    if (isNumber(n)) return n / 1073741824;
     else return 0;
 };
 
@@ -263,8 +258,8 @@ let byteToGib = function (n) {
  */
 let convertStorageSize = function (size) {
     if (!isNumber(size)) return "";
-    else if (size > 1000000) return (size / 1000000).toFixed(2) + " GiB";
-    else if (size > 1000) return (size / 1000).toFixed(2) + "MiB";
+    else if (size > 1000000) return (size / 1048576).toFixed(2) + " GiB";
+    else if (size > 1000) return (size / 1024).toFixed(2) + "MiB";
     return "";
 };
 
@@ -275,8 +270,8 @@ let convertStorageSize = function (size) {
  */
 const convertNetSpeed = function (bytesPerSec) {
     if (bytesPerSec < 512) return bytesPerSec.toFixed(2) + " B/s";
-    else if (bytesPerSec > 512 && bytesPerSec < 524288) return (bytesPerSec / 1024).toFixed(2) + " KB/s"
-    else return (bytesPerSec / 1048576).toFixed(2) + "MB/s"
+    else if (bytesPerSec > 512 && bytesPerSec < 524288) return (bytesPerSec / 1000).toFixed(2) + " KB/s"
+    else return (bytesPerSec / 1000000).toFixed(2) + "MB/s"
 };
 
 
@@ -301,8 +296,8 @@ let updateMemPieData = function (data) {
     window.MemChart.update();
 
     $("#mem-usage-percent").html(newData);
-    $("#memory-used-size-num").html(fixTwo(byteToGib(data.used)));
-    $("#memory-idle-size-num").html(fixTwo(byteToGib(data.free)));
+    $("#memory-used-size-num").html(fixTwo(byteToGib(data.actualUsed)));
+    $("#memory-idle-size-num").html(fixTwo(byteToGib(data.actualFree)));
 
 };
 /**
@@ -310,8 +305,8 @@ let updateMemPieData = function (data) {
  * @param index
  */
 let updateStorageChart = function (index) {
-    const usePercent = parseFloat((window.monitorCache.storages[index].usePercent).toFixed(2));
-    const freePercent = parseFloat((1 - usePercent).toFixed(2));
+    const usePercent = parseFloat(((window.monitorCache.storages[index].usePercent)*100).toFixed(2));
+    const freePercent = parseFloat((100 - usePercent).toFixed(2));
     window.StorageChart.data.datasets[0].data[0] = usePercent;
     window.StorageChart.data.datasets[0].data[1] = freePercent;
     window.StorageChart.update();
@@ -828,7 +823,7 @@ let clearGetCharDataInterval = function () {
 
 //////////////////////////////////////////////DOM加载完毕//////////////////////////////////////////////////
 
-(function ($) {
+
 
     $(document).ready(function () {
         //初始化WebSocket

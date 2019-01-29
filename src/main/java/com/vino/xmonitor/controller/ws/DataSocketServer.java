@@ -37,6 +37,7 @@ public class DataSocketServer {
     public static MemService memService;
     public static NetService netService;
     public static StorageService storageService;
+    public static ProcessService processService;
 
     /**
      * 统计在线人数
@@ -183,6 +184,8 @@ public class DataSocketServer {
                 sendObj(session,DataResult.success(DataNames.NET_SPEED_NAME, netService.getCacheNetSpeed()));
             } else if(DataNames.STORAGE_NAME.equals(dataName)) {
                 sendObj(session, DataResult.success(DataNames.STORAGE_NAME, storageService.getStorages()));
+            } else if(DataNames.PROCESSES_NAME.equals(dataName)) {
+                sendObj(session, DataResult.success(DataNames.STORAGE_NAME, processService.getProcessVoList()));
             }
         } catch (Exception e) {
             // TODO
