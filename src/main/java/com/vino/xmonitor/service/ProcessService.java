@@ -20,24 +20,46 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ProcessService {
+
+
+
+
+
+    public void killProc(String pid) throws SigarException{
+        OsUtils.killProc(pid);
+    }
     
+    public void killProc(long pid)throws SigarException {
+        OsUtils.killProc(pid);
+    }
 
     public List <Process> getProcessList() throws SigarException {
         List<Process> list = OsUtils.getProcs();
         sortProcByMem(list);
         return list;
-    } 
+    }
 
 
     private void sortProcByMem(List<Process> li) {
         long totalMem = (long)CacheHelper.getFromPersisCache("total_mem");
         li.sort((p1, p2) -> {
+            if(p1 == null && p2 == null) {
+                return 0;
+            }
+            if(p1 == null) {
+                return -1;
+            }
+            if(p2 == null) {
+                return 1;
+            }
             long m1 = p1.getMem();
             long m2 = p2.getMem();
-            if (p1.getState().equals('R')) m1 += totalMem * 1000;
-            if (p2.getState().equals('R')) m2 += totalMem * 1000;
-            
-            return new Long(m2).intValue() - new Long(m1).intValue();
+            // double c1 = p1.getCpuUsage();
+            // double c2 = p2.getCpuUsage();
+            // if (p1.getState().equals('R')) m1 += totalMem * 1000;
+            // if (p2.getState().equals('R')) m2 += totalMem * 1000;
+            // if (c1 < c2)  m2 += totalMem * 1000;
+            return new Long(m2).intValue() - new Long(m1).intValue() > 0 ? 1 : -1;
         });
     }
 
@@ -49,7 +71,6 @@ public class ProcessService {
         }
         return res;
     }
-    
 
 
 
@@ -74,8 +95,8 @@ public class ProcessService {
 
     private String convertPercent(double per) {
         BigDecimal bigDecimal = new BigDecimal(per);
-        //这里的 2 就是你要保留几位小数。
-        return bigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() + "";
+        //保留2位小数。
+        return bigDecimal.setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue() + "%";
     }
 
     private String convertMem (long size) {
@@ -98,7 +119,6 @@ public class ProcessService {
         STOP('T', "中止"),
         ZOMBIE('Z',"完成"),
         IDLE('D',"空闲");
-        
         // Z已取消
         // T已停止
 

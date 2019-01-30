@@ -1,8 +1,6 @@
 package com.vino.xmonitor.mcore;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -21,6 +19,7 @@ import com.sun.management.OperatingSystemMXBean;
 import com.vino.xmonitor.bean.NetSpeed;
 import com.vino.xmonitor.bean.hardware.Storage;
 import com.vino.xmonitor.bean.soft.Process;
+
 import org.hyperic.sigar.Cpu;
 import org.hyperic.sigar.CpuInfo;
 import org.hyperic.sigar.CpuPerc;
@@ -43,13 +42,18 @@ import org.hyperic.sigar.SigarProxy;
 import org.hyperic.sigar.Swap;
 import org.hyperic.sigar.Who;
 import org.hyperic.sigar.cmd.Ps;
-import org.hyperic.sigar.cmd.Shell;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author phantom
  */
 public class OsUtils {
 
+    private static Logger logger = LoggerFactory.getLogger(OsUtils.class);
+
+
+    // TODO: 端口范围判断
     private final static int MIN_PORT_NUMBER = 0;
     private final static int MAX_PORT_NUMBER = 65535;
     private static long lastGetSpeedTime = System.currentTimeMillis();
@@ -81,29 +85,47 @@ public class OsUtils {
 
 
     public static List<Process> getProcs() throws SigarException {
-        Sigar sigar = new Sigar();
-        Shell shell = new Shell();
+        Sigar sigar = SigarHolder.getSigarInstance();
+        // Shell shell = new Shell();
 
         Ps ps = new Ps();
         long[] pids = sigar.getProcList();
-        List <Process> res = new ArrayList();
+        List <Process> res = new ArrayList<Process>();
         for(int i = 0; i < pids.length; ++i) {
             long pid = pids[i];
-            res.add(getProcObj(sigar, pid));
+            Process p = getProcObj(sigar, pid);
+            if (p != null)
+                res.add(p);
+            else
+                continue;
         }
+        // logger.info("====================");
         return res;
     }
 
 
 
 
+    public static void killProc(long pid) throws SigarException {
+        Sigar sigar = SigarHolder.getSigarInstance();
+        sigar.kill(pid, 9);
+    }
 
+    public static void killProc(String pid) throws SigarException {
+        Sigar sigar = SigarHolder.getSigarInstance();
+        sigar.kill(pid, 9);
+    }
 
 
 
 
     public static Process getProcObj(SigarProxy sigar, long pid) throws SigarException {
-        ProcState state = sigar.getProcState(pid);
+        ProcState state = null;
+        try {
+            state = sigar.getProcState(pid);
+        } catch (SigarException e) {
+            return null;
+        }
         ProcTime time = null;
         String unknown = "unkown";
         Process p = new Process();
@@ -164,20 +186,30 @@ public class OsUtils {
         } else {
             p.setCpuTime(0);
         }
-        
-        // info：名字 
-        
-        // String name = ProcUtil.getDescription(sigar, pid);
-        p.setName(sigar.getProcArgs(pid)[0]);
 
-        double cpuUsage = sigar.getProcCpu(pid).getPercent();
-        p.setCpuUsage(cpuUsage);
+        // info：名字
+        String name = ProcUtil.getDescription(sigar, pid);
+        // String[] args = sigar.getProcArgs(pid);
+        String[] args = name.split(" ");
+        if (0 != args.length){
+            p.setName(args[0]);
+        } else {
+            int i = name.indexOf("--");
+            p.setName(name.substring(0, i == -1 ? name.length() : i));
+        }
+        //p.setName([0]);
+        try {
+            double cpuUsage = sigar.getProcCpu(pid).getPercent();
+            p.setCpuUsage(cpuUsage);
+        } catch (Exception e) {
+            return null;
+        }
         return p;
     }
 
 
 
-   
+
     public static long getCpuTime(ProcTime time) {
         return System.currentTimeMillis() - time.getStartTime();
     }

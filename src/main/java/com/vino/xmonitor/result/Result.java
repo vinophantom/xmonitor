@@ -12,6 +12,12 @@ public class Result<T> {
     public static  <T> Result<T> success(T data){
         return new Result<T>(data);
     }
+    /**
+     *  成功时候的调用
+     * */
+    public static  <T> Result<T> success(String msg){
+        return new Result(msg);
+    }
 
     /**
      *  失败时候的调用
@@ -20,6 +26,11 @@ public class Result<T> {
         return new Result<T>(codeMsg);
     }
 
+
+    private Result(String msg) {
+        this.msg = msg;
+    }
+    
     private Result(T data) {
         this.data = data;
     }

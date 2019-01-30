@@ -3,6 +3,8 @@ package com.vino.xmonitor.mcore;
 import com.vino.xmonitor.ds.CircularLinkedElement;
 import com.vino.xmonitor.ds.CircularLinkedList;
 import org.hyperic.sigar.Sigar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +13,7 @@ import java.util.MissingResourceException;
 
 class SigarHolder {
 
+    private static Logger logger = LoggerFactory.getLogger(SigarHolder.class);
     static {
 
         // Linux MacOS 分隔符 : Windows 是;
@@ -31,7 +34,8 @@ class SigarHolder {
             // 追加库路径
             String newLibPath = oldLibPath + splitSymbol + classPath.getCanonicalPath();
             System.setProperty("java.library.path", newLibPath);
-            System.out.println("set sigar java.library.path=" + newLibPath);
+            logger.info("set sigar java.library.path=" + newLibPath);
+            // System.out.println("set sigar java.library.path=" + newLibPath);
 
         } catch (IOException e) {
             System.out.println("append sigar to java.library.path error");

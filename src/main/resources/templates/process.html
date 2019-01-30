@@ -44,7 +44,7 @@
                 <h6 class="m-0">进程列表</h6>
             </div>
             <div class="card-body p-0 pb-3 text-center">
-                <table id="process-table" class="table mb-0">
+                <table id="processes-table" class="table mb-0">
                     <thead class="bg-light">
                     <tr>
                         <th scope="col" class="border-0">Pid</th>
@@ -62,9 +62,9 @@
                     <tbody>
                     <tr th:each="p : ${procList}">
                         <td th:text="${p.pid}"></td>
-                        <!-- <!- h:text="${#strings.substringBefore(#strings.append(p.name, '--'),'--')}"></td> --> 
-                        <td><a th:title='${p.name}' th:href="${p.pid}" th:text="${p.name}"></a></td>
-                        <!-- <!- h:text="${#strings.abbreviate(p.name, #strings.indexOf(p.name,'--'))}"></td> --> 
+                        <!-- <!- h:text="${#strings.substringBefore(#strings.append(p.name, '--'),'--')}"></td> -->
+                        <td><a th:title='${p.name}' th:href="@{/process/{pid}(pid=${p.pid})}" th:text="${p.name}"></a></td>
+                        <!-- <!- h:text="${#strings.abbreviate(p.name, #strings.indexOf(p.name,'--'))}"></td> -->
                         <td th:text="${p.user}"></td>
                         <!-- <td th:text="${p.state}"></td> -->
                         <td th:text="${p.cpuUsage}"></td>

@@ -185,7 +185,7 @@ public class DataSocketServer {
             } else if(DataNames.STORAGE_NAME.equals(dataName)) {
                 sendObj(session, DataResult.success(DataNames.STORAGE_NAME, storageService.getStorages()));
             } else if(DataNames.PROCESSES_NAME.equals(dataName)) {
-                sendObj(session, DataResult.success(DataNames.STORAGE_NAME, processService.getProcessVoList()));
+                sendObj(session, DataResult.success(DataNames.PROCESSES_NAME, processService.getProcessVoList()));
             }
         } catch (Exception e) {
             // TODO

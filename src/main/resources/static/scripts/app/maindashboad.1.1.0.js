@@ -60,7 +60,7 @@ function initWebSocket() {
 //接收到消息的回调方法
 
     websocket.onmessage = function (event) {
-        
+
         try {
             let data = JSON.parse(event.data);
             //如果服务器成功
@@ -253,13 +253,13 @@ let byteToGib = function (n) {
 
 /**
  * 存储单位的转换
- * @param size
- * @returns {*}
+ * @param size 单位KiB
+ * @returns {string}
  */
 let convertStorageSize = function (size) {
     if (!isNumber(size)) return "";
-    else if (size > 1000000) return (size / 1048576).toFixed(2) + " GiB";
-    else if (size > 1000) return (size / 1024).toFixed(2) + "MiB";
+    else if (size > 1048576) return (size / 1048576).toFixed(2) + " GiB";
+    else if (size > 1024) return (size / 1024).toFixed(2) + "MiB";
     return "";
 };
 

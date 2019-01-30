@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import com.vino.xmonitor.mcore.OsUtils;
 
@@ -13,9 +12,9 @@ import org.hyperic.sigar.DirUsage;
 import org.hyperic.sigar.FileInfo;
 import org.hyperic.sigar.NetConnection;
 import org.hyperic.sigar.NetFlags;
+import org.hyperic.sigar.ProcCpu;
 import org.hyperic.sigar.ProcCredName;
 import org.hyperic.sigar.ProcExe;
-import org.hyperic.sigar.ProcFd;
 import org.hyperic.sigar.ProcMem;
 import org.hyperic.sigar.ProcState;
 import org.hyperic.sigar.ProcTime;
@@ -245,5 +244,49 @@ public class CommandTest {
             
         // }
     }
+    @Test
+    public void testget() throws SigarException {
+        Sigar sigar = new Sigar();
+        long pid = 7106;
+        Object o = sigar.getProcArgs(pid);
+        System.out.println(o);
+    }
+
+
+    public String first(String... a ) {
+        return a[5];
+    }
+
+    @Test
+    public void test() {
+        System.out.println(first("1","2","3"));
+    }
+
+
+    @Test
+    public void cpu() throws InterruptedException {
+        int busyTime = 10;
+		int idleTime = busyTime;
+
+		while(true){
+			long startTime = System.currentTimeMillis();
+			//busy loop:
+			while((System.currentTimeMillis()-startTime)<=busyTime)
+				;
+			Thread.sleep(idleTime);
+        }
+    }
+
+    @Test
+    public void testCPU() throws InterruptedException, SigarException {
+        Sigar sigar = new Sigar();
+        while (true) {
+                Thread.sleep(1000L);
+                ProcCpu p = sigar.getProcCpu(7656L);
+                System.out.println(p.getPercent()  + "  " + p.getUser());
+                
+            }
+    }
+
 }
 
