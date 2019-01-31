@@ -2,7 +2,6 @@
 
 
 'use strict';
-'use esversion:6';
 
 
 window.monitorCache = {};
@@ -37,7 +36,7 @@ function initWebSocket() {
     if ('WebSocket' in window) {
         websocket = new WebSocket(dataWebSocketUrl);
     } else {
-        alert("Don't support websocket")
+        alert("Don't support websocket");
     }
 
     websocket.onopen = function () {
@@ -102,12 +101,13 @@ let WSMessage = function (message, data, requestDataName) {
 /**
  * 发送请相关求数据的WebSocket请求
  * @param dataname 数据名。
+ * @param args 参数
  */
-let sendWebSocketDataRequest = function (dataname) {
+let sendWebSocketDataRequest = function (dataname, args) {
     //需要先判断websocket的连接状态
     //1表示连接上，
     if (websocket.readyState === 1) {
-        const msg = new WSMessage("get", "", dataname);
+        const msg = new WSMessage("get", args.join(","), dataname);
         // websocket.addEventListener('open', function () {
         // socket.send(message)
 
@@ -123,15 +123,16 @@ let sendWebSocketDataRequest = function (dataname) {
  * 发送对系统信息的请求
  */
 let sendProcessesRequest = function () {
+
     sendWebSocketDataRequest("processes")
 };
 
 
 let distributeData = function (data) {
-    if ("processes" === data.dataName) {
+    if ("processes" === data['dataName']) {
         setProcessesTable(data.data);
     }
-}
+};
 
 
 const setIntervals = function() {
@@ -152,13 +153,13 @@ const setProcessesTable = function(data) {
     const table = $("#processes-table");
     const tbody = table.children("tbody");
     tbody.empty();
-    var tr;
+    let tr;
     data.forEach(p => {
         tr = $("<tr></tr>");
         tr.data("pid", p.pid);
         tr.data("name", p.name);
         tr.append("<td>" + p.pid + "</td>");
-        tr.append("<td>" + p.name + "</td>");
+        tr.append("<td title='"  + p.cmd + "'>" + p.name + "</td>");
         tr.append("<td>" + p.user + "</td>");
         tr.append("<td>" + p.cpuUsage + "</td>");
         tr.append("<td>" + p.mem + "</td>");
@@ -168,7 +169,7 @@ const setProcessesTable = function(data) {
         tbody.append(tr);
     });
     initButton();
-}
+};
 
 let fixTwo = function (n) {
     if (isNumber(n)) return n.toFixed(2);
@@ -197,14 +198,15 @@ let isNumber = function (val) {
 
 const initButton = function() {
     $(".kill-proc-btn").click(function() {
-        var pid = $(this).parent().parent().data("pid");
-        var pname = $(this).parent().parent().data("name");
-        killProcess(pid, pname);
+        const pid = $(this).parent().parent().data("pid");
+        const pname = $(this).parent().parent().data("name");
+        if(!confirm("确定要结束以下进程？\n " + pname)) return;
+        killProcess(pid);
     });
 };
 
-const killProcess = function(pid, name) {
-    if(!confirm("确定要结束以下进程？\n " + name)) return;
+const killProcess = function(pid) {
+
     $.ajax({
         type: "delete",
         url: "http://" + currRootUrl + "/process/" + pid,
@@ -213,9 +215,7 @@ const killProcess = function(pid, name) {
             console.log(response);
         }
     });
-}
-
-
+};
 
 
 

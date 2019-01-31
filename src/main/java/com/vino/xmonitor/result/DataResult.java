@@ -18,7 +18,7 @@ public class DataResult<T> {
      *  成功时候的调用
      * */
     public static  <T> DataResult<T> success(String dataName, T data){
-        DataResult res = new DataResult<T>(dataName, data);
+        DataResult<T> res = new DataResult<T>(dataName, data);
         res.setCode(CodeMsg.SUCCESS);
         return res;
     }

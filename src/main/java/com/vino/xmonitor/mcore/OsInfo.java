@@ -1,15 +1,15 @@
-package com.vino.xmonitor.utils;
+package com.vino.xmonitor.mcore;
 
 /**
  * 操作系统类： 获取System.getProperty("os.name")对应的操作系统
  *
- * @author
+ * @author phantom
  */
 public class OsInfo {
 
     private static String OS = System.getProperty("os.name").toLowerCase();
 
-    private static OsInfo _instance = new OsInfo();
+    private static OsInfo instance = new OsInfo();
 
     private EPlatform platform;
 
@@ -21,7 +21,7 @@ public class OsInfo {
     }
 
     private static boolean isMacOS() {
-        return OS.contains("mac") && OS.indexOf("os") > 0 && OS.indexOf("x") < 0;
+        return OS.contains("mac") && OS.indexOf("os") > 0 && !OS.contains("x");
     }
 
     private static boolean isMacOSX() {
@@ -89,43 +89,43 @@ public class OsInfo {
      */
     private static EPlatform getOSname() {
         if (isAix()) {
-            _instance.platform = EPlatform.AIX;
+            instance.platform = EPlatform.AIX;
         } else if (isDigitalUnix()) {
-            _instance.platform = EPlatform.Digital_Unix;
+            instance.platform = EPlatform.Digital_Unix;
         } else if (isFreeBSD()) {
-            _instance.platform = EPlatform.FreeBSD;
+            instance.platform = EPlatform.FreeBSD;
         } else if (isHPUX()) {
-            _instance.platform = EPlatform.HP_UX;
+            instance.platform = EPlatform.HP_UX;
         } else if (isIrix()) {
-            _instance.platform = EPlatform.Irix;
+            instance.platform = EPlatform.Irix;
         } else if (isLinux()) {
-            _instance.platform = EPlatform.Linux;
+            instance.platform = EPlatform.Linux;
         } else if (isMacOS()) {
-            _instance.platform = EPlatform.Mac_OS;
+            instance.platform = EPlatform.Mac_OS;
         } else if (isMacOSX()) {
-            _instance.platform = EPlatform.Mac_OS_X;
+            instance.platform = EPlatform.Mac_OS_X;
         } else if (isMPEiX()) {
-            _instance.platform = EPlatform.MPEiX;
+            instance.platform = EPlatform.MPEiX;
         } else if (isNetWare()) {
-            _instance.platform = EPlatform.NetWare_411;
+            instance.platform = EPlatform.NetWare_411;
         } else if (isOpenVMS()) {
-            _instance.platform = EPlatform.OpenVMS;
+            instance.platform = EPlatform.OpenVMS;
         } else if (isOS2()) {
-            _instance.platform = EPlatform.OS2;
+            instance.platform = EPlatform.OS2;
         } else if (isOS390()) {
-            _instance.platform = EPlatform.OS390;
+            instance.platform = EPlatform.OS390;
         } else if (isOSF1()) {
-            _instance.platform = EPlatform.OSF1;
+            instance.platform = EPlatform.OSF1;
         } else if (isSolaris()) {
-            _instance.platform = EPlatform.Solaris;
+            instance.platform = EPlatform.Solaris;
         } else if (isSunOS()) {
-            _instance.platform = EPlatform.SunOS;
+            instance.platform = EPlatform.SunOS;
         } else if (isWindows()) {
-            _instance.platform = EPlatform.Windows;
+            instance.platform = EPlatform.Windows;
         } else {
-            _instance.platform = EPlatform.Others;
+            instance.platform = EPlatform.Others;
         }
-        return _instance.platform;
+        return instance.platform;
     }
 
     /**
@@ -140,7 +140,9 @@ public class OsInfo {
      *
      * @author isea533
      */
+    @SuppressWarnings("AlibabaEnumConstantsMustHaveComment")
     public enum EPlatform {
+
         Any("any"), Linux("Linux"), Mac_OS("Mac OS"), Mac_OS_X("Mac OS X"), Windows("Windows"), OS2("OS/2"), Solaris(
                 "Solaris"), SunOS("SunOS"), MPEiX("MPE/iX"), HP_UX("HP-UX"), AIX("AIX"), OS390("OS/390"), FreeBSD(
                 "FreeBSD"), Irix("Irix"), Digital_Unix("Digital Unix"), NetWare_411(
@@ -150,6 +152,8 @@ public class OsInfo {
             this.description = desc;
         }
 
+
+        @Override
         public String toString() {
             return description;
         }

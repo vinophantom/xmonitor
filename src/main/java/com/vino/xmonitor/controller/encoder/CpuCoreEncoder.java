@@ -1,7 +1,6 @@
 package com.vino.xmonitor.controller.encoder;
 
 import com.alibaba.fastjson.JSON;
-import com.vino.xmonitor.bean.hardware.Cpu;
 import com.vino.xmonitor.bean.hardware.CpuCore;
 
 import javax.websocket.EncodeException;

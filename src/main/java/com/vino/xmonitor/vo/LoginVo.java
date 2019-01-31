@@ -5,7 +5,9 @@ package com.vino.xmonitor.vo;
 import javax.validation.constraints.NotNull;
 
 /**
- * Created by jiangyunxiong on 2018/5/22.
+ *
+ * @author phantom
+ * @date 2019/01/22
  */
 public class LoginVo {
 

@@ -6,6 +6,9 @@ import org.hyperic.sigar.Mem;
 import org.hyperic.sigar.SigarException;
 import org.springframework.stereotype.Service;
 
+/**
+ * @author phantom
+ */
 @Service
 public class MemService {
 

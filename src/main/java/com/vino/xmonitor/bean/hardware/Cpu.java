@@ -1,17 +1,20 @@
 package com.vino.xmonitor.bean.hardware;
 
 
+/**
+ * @author phantom
+ */
 public class Cpu {
 
 
-    private int Mhz;
+    private int mhz;
     private String vendor;
     private String model;
     private int totalCores;
     private long processCpuTime;
 
     public Cpu(int mhz, String vendor, String model, int totalCores, long processCpuTime) {
-        Mhz = mhz;
+        this.mhz = mhz;
         this.vendor = vendor;
         this.model = model;
         this.totalCores = totalCores;
@@ -19,11 +22,11 @@ public class Cpu {
     }
 
     public int getMhz() {
-        return Mhz;
+        return mhz;
     }
 
     public void setMhz(int mhz) {
-        Mhz = mhz;
+        this.mhz = mhz;
     }
 
     public String getVendor() {
@@ -51,7 +54,7 @@ public class Cpu {
     }
 
     public Cpu(int mhz, String vendor, String model, int totalCores) {
-        Mhz = mhz;
+        this.mhz = mhz;
         this.vendor = vendor;
         this.model = model;
         this.totalCores = totalCores;

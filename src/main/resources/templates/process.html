@@ -23,9 +23,9 @@
         text-align: center;
     }
 
-    table tr td:nth-child(2) {
-        
-    }
+    /*table tr td:nth-child(2) {*/
+        /**/
+    /*}*/
 </style>
 
 <!-- Page Header -->
@@ -41,18 +41,46 @@
     <div class="col">
         <div class="card card-small mb-4">
             <div class="card-header border-bottom">
-                <h6 class="m-0">进程列表</h6>
+                <!--<h6 class="m-0">进程列表</h6>-->
+
+                <div class="row">
+                    <div class="col">
+                        <h5 class="m-0">进程列表</h5>
+                    </div>
+                    <div>
+                        排序根据：
+                        <label>
+                            <select id="storage-select" class="custom-select custom-select-sm">
+                                <option selected value="common">默认</option>
+                                <option value="sort-by-cpu">CPU</option>
+                                <option value="sort-by-mem">内存</option>
+                                <!--<option value="1">Today</option>-->
+                            </select>
+                        </label>
+                        &nbsp;&nbsp;
+                    </div>
+                    <div></div>
+                </div>
+                <!--排序：-->
+                <!--<span class="custom-control custom-checkbox mb-1" onclick="console.log(1);">-->
+                    <!--<input type="checkbox" class="custom-control-input" checked >-->
+                    <!--<label class="custom-control-label">内存</label>-->
+                <!--</span>-->
+                <!--<span class="custom-control custom-checkbox mb-1">-->
+                    <!--<input type="checkbox" class="custom-control-input">-->
+                    <!--<label class="custom-control-label">CPU</label>-->
+                <!--</span>-->
             </div>
             <div class="card-body p-0 pb-3 text-center">
                 <table id="processes-table" class="table mb-0">
                     <thead class="bg-light">
                     <tr>
-                        <th scope="col" class="border-0">Pid</th>
-                        <th scope="col" class="border-0" width="360px">名称</th>
-                        <th scope="col" class="border-0">用户</th>
+                        <th scope="col" class="border-0" width="5%">Pid</th>
+                        <th scope="col" class="border-0" width="30%">名称</th>
+                        <th scope="col" class="border-0" width="8%">用户</th>
                         <!-- <th scope="col" class="border-0">状态</th> -->
-                        <th scope="col" class="border-0">CPU</th>
-                        <th scope="col" class="border-0">内存</th>
+                        <th scope="col" class="border-0" width="8%">CPU</th>
+                        <th scope="col" class="border-0" width="8%">内存</th>
                         <!-- <th scope="col" class="border-0">固定内存</th> -->
                         <th scope="col" class="border-0">共享内存</th>
                         <th scope="col" class="border-0">开始时间</th>
@@ -60,47 +88,23 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="p : ${procList}">
-                        <td th:text="${p.pid}"></td>
+                    <!--<tr th:each="p : ${procList}">-->
+                        <!--<td th:text="${p.pid}"></td>-->
                         <!-- <!- h:text="${#strings.substringBefore(#strings.append(p.name, '--'),'--')}"></td> -->
-                        <td><a th:title='${p.name}' th:href="@{/process/{pid}(pid=${p.pid})}" th:text="${p.name}"></a></td>
+                        <!--<td><a th:title='${p.name}' th:href="@{/process/{pid}(pid=${p.pid})}" th:text="${p.name}"></a></td>-->
                         <!-- <!- h:text="${#strings.abbreviate(p.name, #strings.indexOf(p.name,'--'))}"></td> -->
-                        <td th:text="${p.user}"></td>
+                        <!--<td th:text="${p.user}"></td>-->
                         <!-- <td th:text="${p.state}"></td> -->
-                        <td th:text="${p.cpuUsage}"></td>
-                        <td th:text="${p.mem}"></td>
+                        <!--<td th:text="${p.cpuUsage}"></td>-->
+                        <!--<td th:text="${p.mem}"></td>-->
                         <!-- <!- h:text="${p.rss}"></td> -->
-                        <td th:text="${p.share}"></td>
-                        <td th:text="${p.startTime}"></td>
+                        <!--<td th:text="${p.share}"></td>-->
+                        <!--<td th:text="${p.startTime}"></td>-->
                         <!-- <td th:text="${p.cpuTime}"></td> -->
-                        <td>
-                            <button type="button" class="btn btn-accent btn-pill kill-proc-btn" >结束进程</button>
-                        </td>
+                        <!--<td>-->
+                            <!--<button type="button" class="btn btn-accent btn-pill kill-proc-btn" >结束进程</button>-->
+                        <!--</td>-->
                     </tr>
-                    <!-- <tr>
-                        <td>2</td>
-                        <td>Clark</td>
-                        <td>Angela</td>
-                        <td>Estonia</td>
-                        <td>Borghetto di Vara</td>
-                        <td>1-660-850-1647</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Jerry</td>
-                        <td>Nathan</td>
-                        <td>Cyprus</td>
-                        <td>Braunau am Inn</td>
-                        <td>214-4225</td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td>Colt</td>
-                        <td>Angela</td>
-                        <td>Liberia</td>
-                        <td>Bad Hersfeld</td>
-                        <td>1-848-473-7416</td>
-                    </tr> -->
                     </tbody>
                 </table>
             </div>

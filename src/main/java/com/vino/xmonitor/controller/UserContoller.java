@@ -2,10 +2,11 @@ package com.vino.xmonitor.controller;
 
 
 import com.vino.xmonitor.bean.hardware.CpuCore;
-import com.vino.xmonitor.service.CpuService;
+import com.vino.xmonitor.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
@@ -18,7 +19,16 @@ import java.util.List;
 public class UserContoller {
 
     @Autowired
-    private CpuService cpuService;
+    private UserService userService;
+    // @Autowired
+    // private CpuService cpuService;
+
+
+    @RequestMapping(value={"/count"}, method = {RequestMethod.GET})
+    @ResponseBody
+    public int countUsers() {
+        return userService.countUsers();
+    }
 
 
     @RequestMapping("/info")

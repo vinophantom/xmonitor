@@ -1,10 +1,10 @@
 package com.vino.xmonitor.controller;
 
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.vino.xmonitor.result.CodeMsg;
 import com.vino.xmonitor.result.Result;
 import com.vino.xmonitor.service.ProcessService;
 
@@ -24,6 +24,9 @@ import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
 
 
+/**
+ * @author phantom
+ */
 @Controller
 @RequestMapping("/process")
 public class ProcessController extends ControllerBase {
@@ -32,18 +35,15 @@ public class ProcessController extends ControllerBase {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
+    private final ThymeleafViewResolver thymeleafViewResolver;
+
+    private final ProcessService processService;
 
     @Autowired
-    ServletContext servletContext;
-
-    @Autowired
-    ApplicationContext applicationContext;
-
-    @Autowired
-    ThymeleafViewResolver thymeleafViewResolver;
-
-    @Autowired
-    ProcessService processService;
+    public ProcessController(ThymeleafViewResolver thymeleafViewResolver, ProcessService processService) {
+        this.thymeleafViewResolver = thymeleafViewResolver;
+        this.processService = processService;
+    }
 
 
     @RequestMapping(value = {"/", ""}, method = {RequestMethod.GET})
@@ -51,9 +51,8 @@ public class ProcessController extends ControllerBase {
     public String process(HttpServletRequest request, HttpServletResponse response, ModelMap map) {
 
         try {
-            // List<Process>  list = processService.getProcessList();
-            // map.put("procList", processService.getProcessVoList());
             IContext iContext = new WebContext(request, response, request.getServletContext(),request.getLocale());
+
             String content = thymeleafViewResolver.getTemplateEngine().process("process", iContext);
 
             String html = getOverAllDomString(request, response, map, content, thymeleafViewResolver);
@@ -69,13 +68,14 @@ public class ProcessController extends ControllerBase {
 
     @RequestMapping(value="/{pid}" , method=RequestMethod.DELETE)
     @ResponseBody
-    public Result requestMethodName(@PathVariable("pid") String pid) {
+    public Result<Object> requestMethodName(@PathVariable("pid") String pid) {
         try {
             pid = pid.trim();
             processService.killProc(pid);
         } catch (Exception e) {
             //TODO: handle exception
-            return Result.error(null);
+            logger.error(e.getMessage(), e);
+            return Result.error(CodeMsg.SERVER_ERROR);
         }
         return Result.success("进程已结束！");
     }

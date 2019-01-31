@@ -7,16 +7,21 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 /**
- * Created by jiangyunxiong on 2018/5/21.
+ *
+ * @author phantom
+ * @date
  */
 @Mapper
 public interface XUserMapper {
 
-    @Select("select * from sk_user where id = #{id}")
+    @Select("select * from x_user where id = #{id}")
     public XUser getById(@Param("id") long id);
 
-    @Update("update sk_user set password = #{password} where id = #{id}")
+    @Update("update x_user set password = #{password} where id = #{id}")
     public void update(XUser toBeUpdate);
+
+    @Select("select count(1) from x_user")
+    public int countUsers();
 }
 
 

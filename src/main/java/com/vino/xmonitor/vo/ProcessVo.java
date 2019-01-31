@@ -13,8 +13,15 @@ public class ProcessVo {
     private String cpuTime;
     private String name;
     private String cpuUsage;
+    private String cmd;
 
+    public String getCmd() {
+        return cmd;
+    }
 
+    public void setCmd(String cmd) {
+        this.cmd = cmd;
+    }
 
     /**
      * @return String return the pid

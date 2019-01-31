@@ -1,11 +1,11 @@
 package com.vino.xmonitor.bean.hardware;
 
 public class Swap {
-    long total = 0L;
-    long used = 0L;
-    long free = 0L;
-    long pageIn = 0L;
-    long pageOut = 0L;
+    private long total = 0L;
+    private long used = 0L;
+    private long free = 0L;
+    private long pageIn = 0L;
+    private long pageOut = 0L;
 
     public Swap() {
     }

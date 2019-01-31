@@ -5,6 +5,9 @@ import com.google.common.cache.CacheBuilder;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author phantom
+ */
 public class CacheHelper {
 
 

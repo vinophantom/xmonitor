@@ -3,11 +3,14 @@ package com.vino.xmonitor.mcore;
 
 import org.hyperic.sigar.*;
 
+/**
+ * @author phantom
+ */
 public class OsHolder {
 
-    private static Runtime runtime = Runtime.getRuntime();
+    // private static Runtime runtime = Runtime.getRuntime();
 
-    private static final OperatingSystem os = OperatingSystem.getInstance();
+    // private static final OperatingSystem os = OperatingSystem.getInstance();
 
     //////////////////////////////////////////////Software/////////////////////////////////////////////////////////
 

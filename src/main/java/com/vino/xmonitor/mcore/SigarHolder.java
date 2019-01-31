@@ -35,31 +35,25 @@ class SigarHolder {
             String newLibPath = oldLibPath + splitSymbol + classPath.getCanonicalPath();
             System.setProperty("java.library.path", newLibPath);
             logger.info("set sigar java.library.path=" + newLibPath);
-            // System.out.println("set sigar java.library.path=" + newLibPath);
-
         } catch (IOException e) {
-            System.out.println("append sigar to java.library.path error");
-            e.printStackTrace();
+            logger.error("append sigar to java.library.path error", e);
         }
     }
 
 
     private static final int SIZE = 16;
-
-
-    private static CircularLinkedList<Sigar> sigarpool;
-    private static CircularLinkedElement<Sigar> temp = null;
+    private static CircularLinkedElement<Sigar> temp;
 
 
     static {
-        sigarpool = new CircularLinkedList<Sigar>();
-        sigarpool.initList();
+        CircularLinkedList<Sigar> sigarPool = new CircularLinkedList<>();
+        sigarPool.initList();
         //插入
         for (int i = 0; i < SIZE; i++) {
-            sigarpool.insertList(new Sigar());
+            sigarPool.insertList(new Sigar());
         }
 
-        temp = sigarpool.header;
+        temp = sigarPool.header;
     }
 
 
@@ -68,7 +62,7 @@ class SigarHolder {
      * 获取Sigar实例
      * @return
      */
-    protected static Sigar getSigarInstance() {
+    static Sigar getSigarInstance() {
         return (Sigar) temp.next().value();
     }
 

@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vino.xmonitor.bean.soft.Process;
-import com.vino.xmonitor.cache.CacheHelper;
 import com.vino.xmonitor.mcore.OsUtils;
 import com.vino.xmonitor.utils.DateUtils;
+import com.vino.xmonitor.utils.StringUtils;
 import com.vino.xmonitor.vo.ProcessVo;
 
 import org.hyperic.sigar.SigarException;
@@ -21,27 +21,60 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProcessService {
 
+    private final static int SORT_BY_CPU = 0;
+    private final static int SORT_BY_MEM = 1;
 
-
+    private final static String SORT_BY_CPU_ARG = "sort-by-cpu";
+    private final static String SORT_BY_MEM_ARG = "sort-by-mem";
 
 
     public void killProc(String pid) throws SigarException{
         OsUtils.killProc(pid);
     }
-    
+
     public void killProc(long pid)throws SigarException {
         OsUtils.killProc(pid);
     }
 
-    public List <Process> getProcessList() throws SigarException {
+    public List <Process> getProcessList(String... args) throws SigarException {
+
         List<Process> list = OsUtils.getProcs();
-        sortProcByMem(list);
+        int sortFlag = SORT_BY_MEM;
+        for (String arg : args) {
+            if (!StringUtils.isEmptyString(arg)) {
+                if (SORT_BY_CPU_ARG.equals(arg)) {
+                    sortFlag = SORT_BY_CPU;
+                }
+            }
+        }
+        sortList(sortFlag, list);
         return list;
     }
 
 
+    private void sortList (int flag, List<Process> list) {
+        if(flag == SORT_BY_CPU) {
+            sortProcByCpu(list);
+        } else if(flag == SORT_BY_MEM) {
+            sortProcByMem(list);
+        }
+    }
+
+    private void sortProcByCpu(List<Process> li) {
+        li.sort((p1, p2) -> {
+            if(p1 == null && p2 == null) {
+                return 0;
+            } else if(p1 == null) {
+                return -1;
+            } else if(p2 == null) {
+                return 1;
+            }
+            double c1 = p1.getCpuUsage();
+            double c2 = p2.getCpuUsage();
+            return c2 > c1 ? 1 : -1;
+        });
+    }
     private void sortProcByMem(List<Process> li) {
-        long totalMem = (long)CacheHelper.getFromPersisCache("total_mem");
         li.sort((p1, p2) -> {
             if(p1 == null && p2 == null) {
                 return 0;
@@ -54,17 +87,12 @@ public class ProcessService {
             }
             long m1 = p1.getMem();
             long m2 = p2.getMem();
-            // double c1 = p1.getCpuUsage();
-            // double c2 = p2.getCpuUsage();
-            // if (p1.getState().equals('R')) m1 += totalMem * 1000;
-            // if (p2.getState().equals('R')) m2 += totalMem * 1000;
-            // if (c1 < c2)  m2 += totalMem * 1000;
-            return new Long(m2).intValue() - new Long(m1).intValue() > 0 ? 1 : -1;
+            return m2 > m1 ? 1 : -1;
         });
     }
 
-    public List<ProcessVo> getProcessVoList() throws SigarException {
-        List<Process> list = getProcessList();
+    public List<ProcessVo> getProcessVoList(String... args) throws SigarException {
+        List<Process> list = getProcessList(args);
         List<ProcessVo> res = new ArrayList<>();
         for (Process p : list) {
             res.add(convertToProcessVo(p));
@@ -79,8 +107,7 @@ public class ProcessService {
         pv.setPid(p.getPid() + "");
         String name = p.getName();
         pv.setName(name);
-        // int i = name.indexOf("--");
-        // pv.setName(name.substring(0, i == -1 ? name.length() : i));
+        pv.setCmd(p.getCmd());
         pv.setUser(p.getUser());
         pv.setState(State.convertState(p.getState()));
         pv.setRss(convertMem(p.getRss()));
@@ -100,32 +127,54 @@ public class ProcessService {
     }
 
     private String convertMem (long size) {
-        if (size < 1024) return (size >> 10) + " KiB";
+        if (size < 1024) {
+            return (size >> 10) + " KiB";
+        }
         return (size >> 20) + "MiB";
     }
     private String convertTime(long t) {
-        if(t < 1000) return "< 1s";
-        else if(t < 60000) return Math.round((double)(t / 1000)) + "s";
-        else if(t < 36000000) return Math.round((double)(t / 60000)) + "m";
-        else if(t < 864000000) return Math.round((double)(t / 36000000)) + "h";
-        else return Math.round(t / 864000000) + "day";
+        if(t < 1000) {
+            return "< 1s";
+        } else if(t < 60000) {
+            return Math.round((double)(t / 1000)) + "s";
+        } else if(t < 36000000) {
+            return Math.round((double)(t / 60000)) + "m";
+        } else if(t < 864000000) {
+            return Math.round((double)(t / 36000000)) + "h";
+        } else {
+            return Math.round(t / 864000000) + "day";
+        }
     }
  
 
     enum State {
 
+        /**
+         * 休眠
+         */
         SLEEP('S',"休眠"),
+        /**
+         * 运行中
+         */
         RUN('R',"运行中"),
+        /**
+         * 中止
+         */
         STOP('T', "中止"),
+        /**
+         * 完成
+         */
         ZOMBIE('Z',"完成"),
+        /**
+         * 空闲
+         */
         IDLE('D',"空闲");
-        // Z已取消
-        // T已停止
+        
 
         private char flag;
         private String state;
 
-        private State(char f, String state) {
+        State(char f, String state) {
             this.flag = f;
             this.state = state;
         }
@@ -134,7 +183,9 @@ public class ProcessService {
 
         static String convertState(char flag) {
             for(State s : State.values()){
-                if (s.flag == flag) return s.getState();
+                if (s.flag == flag) {
+                    return s.getState();
+                }
             }
             return null;
         }

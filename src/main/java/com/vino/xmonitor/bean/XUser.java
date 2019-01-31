@@ -4,6 +4,9 @@ package com.vino.xmonitor.bean;
 import java.util.Date;
 
 
+/**
+ * @author phantom
+ */
 public class XUser {
     private Long id;
     private String username;

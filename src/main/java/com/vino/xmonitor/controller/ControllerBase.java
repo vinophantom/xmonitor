@@ -9,10 +9,13 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
 
+/**
+ * @author phantom
+ */
 public class ControllerBase {
 
 
-    protected String getOverAllDomString(HttpServletRequest request, HttpServletResponse response, ModelMap map, String content, ThymeleafViewResolver thymeleafViewResolver) {
+    String getOverAllDomString(HttpServletRequest request, HttpServletResponse response, ModelMap map, String content, ThymeleafViewResolver thymeleafViewResolver) {
         map.put("content", content);
         IContext iContext1 = new WebContext(request, response, request.getServletContext(), request.getLocale(), map);
         //结果输出

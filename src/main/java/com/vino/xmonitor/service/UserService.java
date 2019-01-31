@@ -13,16 +13,28 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * @author phantom
+ */
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @Service
 public class UserService {
 
+    private final XUserMapper userMapper;
+
+
+    private static final String COOKIE_NAME_TOKEN = "token";
+
     @Autowired
-    XUserMapper userMapper;
+    public UserService(XUserMapper userMapper) {
+        this.userMapper = userMapper;
+    }
 
+    public int countUsers() {
+        return userMapper.countUsers();
+    }
 
-    public static final String COOKIE_NAME_TOKEN = "token";
-
-    public XUser getById(long id) {
+    private XUser getById(long id) {
 
         //TODO 取数据库
         XUser user = userMapper.getById(id);
@@ -75,7 +87,7 @@ public class UserService {
      * 将token做为key，用户信息做为value 存入redis模拟session
      * 同时将token存入cookie，保存登录状态
      */
-    public void addCookie(HttpServletResponse response, String token, XUser user) {
+    private void addCookie(HttpServletResponse response, String token, XUser user) {
         Cookie cookie = new Cookie(COOKIE_NAME_TOKEN, token);
         cookie.setMaxAge(3600*24 *2);
         // 设置为网站根目录

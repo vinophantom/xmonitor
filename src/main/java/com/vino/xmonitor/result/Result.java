@@ -16,7 +16,7 @@ public class Result<T> {
      *  成功时候的调用
      * */
     public static  <T> Result<T> success(String msg){
-        return new Result(msg);
+        return new Result<T>(msg);
     }
 
     /**

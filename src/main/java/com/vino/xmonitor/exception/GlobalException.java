@@ -4,13 +4,13 @@ package com.vino.xmonitor.exception;
 import com.vino.xmonitor.result.CodeMsg;
 
 /**
- * Created by jiangyunxiong on 2018/5/22.
+ *
+ * @author jiangyunxiong
+ * @date 2018/5/22
  * <p>
  * 自定义全局异常类
  */
 public class GlobalException extends RuntimeException {
-
-    private static final long servialVersionUID = 1L;
 
     private CodeMsg codeMsg;
 

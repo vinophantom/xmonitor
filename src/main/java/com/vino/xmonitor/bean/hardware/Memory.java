@@ -1,15 +1,18 @@
 package com.vino.xmonitor.bean.hardware;
 
+/**
+ * @author phantom
+ */
 public class Memory {
 
-    long total = 0L;
-    long ram = 0L;
-    long used = 0L;
-    long free = 0L;
-    long actualUsed = 0L;
-    long actualFree = 0L;
-    double usedPercent = 0.0D;
-    double freePercent = 0.0D;
+    private long total = 0L;
+    private long ram = 0L;
+    private long used = 0L;
+    private long free = 0L;
+    private long actualUsed = 0L;
+    private long actualFree = 0L;
+    private double usedPercent = 0.0D;
+    private double freePercent = 0.0D;
 
     public Memory() {
     }

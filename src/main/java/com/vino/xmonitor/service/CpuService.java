@@ -6,9 +6,12 @@ import com.vino.xmonitor.bean.hardware.CpuCore;
 import com.vino.xmonitor.cache.CacheHelper;
 import com.vino.xmonitor.constant.DataNames;
 import com.vino.xmonitor.mcore.OsUtils;
+import com.vino.xmonitor.utils.StringUtils;
 import org.hyperic.sigar.CpuInfo;
 import org.hyperic.sigar.CpuPerc;
 import org.hyperic.sigar.SigarException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,25 +24,29 @@ import java.util.List;
 @Service
 public class CpuService {
 
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public List<CpuCore> getCpuCores() throws SigarException {
+    public List<CpuCore> getCpuCores(String... args) throws SigarException {
         try {
+            @SuppressWarnings("unchecked")
             List<CpuCore> list = (List<CpuCore>) CacheHelper.getFromPersisCache(DataNames.CPU_CORES_NAME);
             if (list == null) {
                 return getCpuCoresFromSys();
             } else {
-//                System.out.println("Cache有值了=======================");
                 return list;
             }
         } catch (SigarException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
+            throw e;
+        } catch (Exception e) {
+            logger.error("Get Process List Error!", e);
             throw e;
         }
 
     }
 
 
-    public List<CpuCore> getCpuCoresFromSys() throws SigarException {
+    public List<CpuCore> getCpuCoresFromSys(String... args) throws SigarException {
         List<CpuCore> res = new ArrayList<>();
         CpuPerc[] cs = OsUtils.getCpuPerc();
         Arrays.stream(cs).forEach(c -> {
@@ -63,7 +70,7 @@ public class CpuService {
             CpuInfo cpuInfo = OsUtils.getCpu();
             return new Cpu(cpuInfo.getMhz(), cpuInfo.getVendor(), cpuInfo.getModel(), cpuInfo.getTotalCores());
         } catch (SigarException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             throw e;
         }
     }

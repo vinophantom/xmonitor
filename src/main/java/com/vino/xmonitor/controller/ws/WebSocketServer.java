@@ -9,11 +9,14 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@ServerEndpoint(
-        value = "/websocket",
-        encoders = {CpuCoreEncoder.class}
-        )
-@Component
+/**
+ * @author phantom
+ */ //@ServerEndpoint(
+//        value = "/websocket",
+//        encoders = {CpuCoreEncoder.class}
+//        )
+//@Component
+@SuppressWarnings("AlibabaThreadLocalShouldRemove")
 public class WebSocketServer {
 
     /**

@@ -1,9 +1,5 @@
 package com.vino.xmonitor.mcore;
 
-import org.hyperic.sigar.Sigar;
-
-import java.io.File;
-import java.nio.file.Paths;
 
 public class SigarUtils {
 

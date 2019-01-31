@@ -7,7 +7,6 @@ import org.hyperic.sigar.cmd.Netstat;
 import org.hyperic.sigar.cmd.Ps;
 import org.hyperic.sigar.cmd.Shell;
 import org.junit.Test;
-import sun.nio.ch.Net;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -196,7 +195,6 @@ public class CommonTest {
                     list = ps.getInfo(sigar, pid);
 
                 } catch (SigarException e) {
-//                    e.printStackTrace();
                     if ("No such process".equals(e.getMessage())) {
                         continue;
                     }

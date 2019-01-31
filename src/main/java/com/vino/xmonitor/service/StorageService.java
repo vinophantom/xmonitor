@@ -13,11 +13,7 @@ import java.util.List;
 @Service
 public class StorageService {
 
-
-
     public List<Storage> getStorages () throws SigarException {
         return OsUtils.getStorages();
     }
-
-
 }

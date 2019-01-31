@@ -8,6 +8,9 @@ import com.vino.xmonitor.mcore.OsUtils;
 import org.hyperic.sigar.SigarException;
 import org.springframework.stereotype.Service;
 
+/**
+ * @author phantom
+ */
 @Service
 public class NetService {
 

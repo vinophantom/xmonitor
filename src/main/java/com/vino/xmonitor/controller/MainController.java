@@ -21,18 +21,18 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Controller
 @RequestMapping(value = "/")
-public class NavController extends ControllerBase {
+public class MainController extends ControllerBase {
 
 
-    @Autowired
-    ServletContext webContext;
+    private final ServletContext webContext;
 
-    @Autowired
-    ApplicationContext applicationContext;
+    private final ThymeleafViewResolver thymeleafViewResolver;
 
     @Autowired
-    ThymeleafViewResolver thymeleafViewResolver;
-
+    public MainController(ServletContext webContext, ThymeleafViewResolver thymeleafViewResolver) {
+        this.webContext = webContext;
+        this.thymeleafViewResolver = thymeleafViewResolver;
+    }
 
 
     @RequestMapping(value = {"/","dashboard"}, method = {RequestMethod.GET})
@@ -40,9 +40,7 @@ public class NavController extends ControllerBase {
     public String index(HttpServletRequest request, HttpServletResponse response, ModelMap map) {
         IContext iContext = new WebContext(request, response, webContext);
         String content = thymeleafViewResolver.getTemplateEngine().process("maindashboard", iContext);
-        String html = getOverAllDomString(request, response, map, content, thymeleafViewResolver);
-
-        return html;
+        return getOverAllDomString(request, response, map, content, thymeleafViewResolver);
     }
 
 
@@ -55,12 +53,5 @@ public class NavController extends ControllerBase {
 
 
 
-//    @RequestMapping(value = {"test"}, method = {RequestMethod.GET})
-//    public String index1(ModelMap map) {
-//        map.addAttribute("headerContent", "<>");
-//        map.addAttribute("divContent", "<div><b>12321321321321312213</b></div>");
-//
-//        return "background";
-//    }
 
 }

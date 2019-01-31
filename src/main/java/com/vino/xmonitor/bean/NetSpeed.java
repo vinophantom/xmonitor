@@ -1,5 +1,8 @@
 package com.vino.xmonitor.bean;
 
+/**
+ * @author phantom
+ */
 public class NetSpeed {
 
 

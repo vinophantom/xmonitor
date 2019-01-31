@@ -7,9 +7,12 @@ import javax.websocket.EncodeException;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
 
-public class DataResultEncoder implements Encoder.Text<DataResult> {
+/**
+ * @author phantom
+ */
+public class DataResultEncoder implements Encoder.Text<DataResult<Object>> {
     @Override
-    public String encode(DataResult t) throws EncodeException {
+    public String encode(DataResult<Object> t) throws EncodeException {
         return JSON.toJSONString(t);
     }
 

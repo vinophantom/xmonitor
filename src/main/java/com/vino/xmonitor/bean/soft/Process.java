@@ -17,13 +17,15 @@ public class Process {
     private long cpuTime;
     private String name;
     private double cpuUsage;
+    private String cmd;
 
-	
+    public String getCmd() {
+        return cmd;
+    }
 
-
-
-
-
+    public void setCmd(String cmd) {
+        this.cmd = cmd;
+    }
 
     /**
      * @return long return the pid

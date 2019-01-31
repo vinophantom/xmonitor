@@ -12,11 +12,12 @@ import com.vino.xmonitor.utils.StringUtils;
 import com.vino.xmonitor.msg.WSMessage;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,6 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class DataSocketServer {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public static SysService sysService;
     public static CpuService cpuService;
@@ -39,32 +41,12 @@ public class DataSocketServer {
     public static StorageService storageService;
     public static ProcessService processService;
 
-    /**
-     * 统计在线人数
-     */
-    private static int onlineCount = 0;
 
     /**
      * 用本地线程保存session
      */
     private static ThreadLocal<Session> sessions = new ThreadLocal<Session>();
 
-    /**
-     * 保存所有连接上的session
-     */
-    private static Map<String, Session> sessionMap = new ConcurrentHashMap<String, Session>();
-
-    public static synchronized int getOnlineCount() {
-        return onlineCount;
-    }
-
-    public static synchronized void addOnlineCount() {
-        onlineCount++;
-    }
-
-    public static synchronized void subOnlineCount() {
-        onlineCount--;
-    }
 
     /**
      * 连接
@@ -73,17 +55,7 @@ public class DataSocketServer {
      */
     @OnOpen
     public void onOpen(Session session) {
-         distributeData(DataNames.CPU_NAME, session);
-//        sessions.set(session);
-//        addOnlineCount();
-//        sessionMap.put(session.getId(), session);
-        System.out.println("【" + session.getId() + "】连接上服务器======当前在线人数【" + getOnlineCount() + "】");
-//        //连接上后给客户端一个消息
-//        sendMsg(session, "连接服务器成功！");
-//        while (true) {
-//            sendMsg(session, "1");
-//            Thread.sleep(1000L);
-//        }
+         distributeData(session, DataNames.CPU_NAME, "");
     }
 
     /**
@@ -93,9 +65,6 @@ public class DataSocketServer {
      */
     @OnClose
     public void onClose(Session session) {
-        subOnlineCount();
-        sessionMap.remove(session.getId());
-        System.out.println("【" + session.getId() + "】退出了连接======当前在线人数【" + getOnlineCount() + "】");
     }
 
     /**
@@ -107,8 +76,7 @@ public class DataSocketServer {
     @OnMessage
     public void onMessage(String message, Session session) {
 
-        WSMessage msg = JSON.parseObject(message, new TypeReference<WSMessage>() {
-        });
+        WSMessage msg = JSON.parseObject(message, new TypeReference<WSMessage>() {});
         handleMsg(msg, session);
     }
 
@@ -122,8 +90,6 @@ public class DataSocketServer {
     public void onError(Session session, Throwable throwable) {
         try {
             throwable.printStackTrace();
-            //System.out.println("发生异常!");
-
         } finally {
             sessions.remove();
         }
@@ -138,7 +104,6 @@ public class DataSocketServer {
      */
     public synchronized void sendMsg(Session session, String msg) {
         try {
-//            session.getBasicRemote().sendObject(new Xu);
             session.getBasicRemote().sendText(msg);
         } catch (IOException e) {
             e.printStackTrace();
@@ -156,7 +121,7 @@ public class DataSocketServer {
         try {
             session.getBasicRemote().sendObject(o);
         } catch (IOException | EncodeException e) {
-            e.printStackTrace();
+            logger.error("发送消息失败！", e);
         }
     }
 
@@ -164,14 +129,13 @@ public class DataSocketServer {
     private void handleMsg(WSMessage msg, Session session) {
         String dataName = msg.getRequestDataName();
         if (!StringUtils.isEmptyString(dataName)) {
-            distributeData(dataName, session);
+            distributeData(session, dataName, "");
         }
         // TODO
     }
 
-    private void distributeData(String dataName, Session session) {
+    private void distributeData(Session session, String dataName, String args ) {
         try {
-
             if (DataNames.CPU_CORES_NAME.equals(dataName)) {
                 sendObj(session, DataResult.success(DataNames.CPU_CORES_NAME, cpuService.getCpuCores()));
             } else if (DataNames.MEM_NAME.equals(dataName)) {
@@ -185,12 +149,11 @@ public class DataSocketServer {
             } else if(DataNames.STORAGE_NAME.equals(dataName)) {
                 sendObj(session, DataResult.success(DataNames.STORAGE_NAME, storageService.getStorages()));
             } else if(DataNames.PROCESSES_NAME.equals(dataName)) {
-                sendObj(session, DataResult.success(DataNames.PROCESSES_NAME, processService.getProcessVoList()));
+                sendObj(session, DataResult.success(DataNames.PROCESSES_NAME, processService.getProcessVoList(args)));
             }
         } catch (Exception e) {
-            // TODO
-            e.printStackTrace();
             sendObj(session, DataResult.error(CodeMsg.SERVER_ERROR));
+            logger.error("数据分发失败", e);
         }
 
     }
