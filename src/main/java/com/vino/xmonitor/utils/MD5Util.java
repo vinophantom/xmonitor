@@ -40,8 +40,7 @@ public class MD5Util {
     //合并
     private static String inputPassToDbPass(String input, String saltDB){
         String formPass = inputPassToFormPass(input);
-        String dbPass = formPassToDBPass(formPass, saltDB);
-        return dbPass;
+        return formPassToDBPass(formPass, saltDB);
     }
 
     public static void main(String[] args) {

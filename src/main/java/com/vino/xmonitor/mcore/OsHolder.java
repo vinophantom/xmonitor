@@ -6,7 +6,7 @@ import org.hyperic.sigar.*;
 /**
  * @author phantom
  */
-public class OsHolder {
+public final class OsHolder {
 
     // private static Runtime runtime = Runtime.getRuntime();
 

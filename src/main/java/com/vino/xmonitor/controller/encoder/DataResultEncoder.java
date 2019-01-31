@@ -12,7 +12,7 @@ import javax.websocket.EndpointConfig;
  */
 public class DataResultEncoder implements Encoder.Text<DataResult<Object>> {
     @Override
-    public String encode(DataResult<Object> t) throws EncodeException {
+    public String encode(DataResult<Object> t) {
         return JSON.toJSONString(t);
     }
 

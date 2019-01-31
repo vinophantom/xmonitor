@@ -45,7 +45,7 @@ public class DataSocketServer {
     /**
      * 用本地线程保存session
      */
-    private static ThreadLocal<Session> sessions = new ThreadLocal<Session>();
+    private static ThreadLocal<Session> sessions = new ThreadLocal<>();
 
 
     /**
@@ -55,7 +55,7 @@ public class DataSocketServer {
      */
     @OnOpen
     public void onOpen(Session session) {
-         distributeData(session, DataNames.CPU_NAME, "");
+         distributeData(session, DataNames.CPU_NAME, null);
     }
 
     /**
@@ -129,12 +129,12 @@ public class DataSocketServer {
     private void handleMsg(WSMessage msg, Session session) {
         String dataName = msg.getRequestDataName();
         if (!StringUtils.isEmptyString(dataName)) {
-            distributeData(session, dataName, "");
+            distributeData(session, dataName, StringUtils.split(msg.getMessage(),","));
         }
         // TODO
     }
 
-    private void distributeData(Session session, String dataName, String args ) {
+    private void distributeData(Session session, String dataName, String[] args ) {
         try {
             if (DataNames.CPU_CORES_NAME.equals(dataName)) {
                 sendObj(session, DataResult.success(DataNames.CPU_CORES_NAME, cpuService.getCpuCores()));

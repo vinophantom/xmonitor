@@ -16,7 +16,7 @@ public class CpuCoreEncoder implements Encoder.Text<CpuCore> {
     @Override
     public void destroy() { }
     @Override
-    public String encode(CpuCore cpuCore) throws EncodeException {
+    public String encode(CpuCore cpuCore) {
         return JSON.toJSONString(cpuCore);
     }
 }

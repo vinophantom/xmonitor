@@ -28,15 +28,15 @@ public class DataLoadScheduleService {
         this.netService = netService;
     }
 
-
-
     @Scheduled(fixedRate = ONE_SECOND)
     public void loadCpuSituation () throws SigarException {
+        CacheHelper.deleteFromPersisCache(DataNames.CPU_CORES_NAME);
         CacheHelper.saveToPersisCache(DataNames.CPU_CORES_NAME, cpuService.getCpuCoresFromSys());
     }
 
     @Scheduled(fixedDelay = THREE_SECOND)
     public void loadNetSpeed () throws SigarException {
+        CacheHelper.deleteFromPersisCache(DataNames.NET_SPEED_NAME);
         CacheHelper.saveToPersisCache(DataNames.NET_SPEED_NAME, netService.getCurrNetSpeed());
     }
 

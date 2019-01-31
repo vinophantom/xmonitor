@@ -1,0 +1,1 @@
+-Xms32M -Xmx128M -Xss512k  -XX:ParallelGCThreads=2

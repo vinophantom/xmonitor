@@ -1,6 +1,7 @@
 package com.vino.xmonitor.controller.ws;
 
 import com.vino.xmonitor.controller.encoder.CpuCoreEncoder;
+import com.vino.xmonitor.utils.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
@@ -85,7 +86,7 @@ public class WebSocketServer {
     @OnMessage
     public void onMessage(String message, Session session) {
         System.out.println("【" + session.getId() + "】客户端的发送消息======内容【" + message + "】");
-        String[] split = message.split(",");
+        String[] split = StringUtils.split(message, ",");
         String sessionId = split[0];
         Session ss = sessionMap.get(sessionId);
         if (ss != null) {

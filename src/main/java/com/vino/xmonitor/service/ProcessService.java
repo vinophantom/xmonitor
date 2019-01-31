@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
  * @author phantom
  */
 @Service
-public class ProcessService {
+public final class ProcessService {
 
     private final static int SORT_BY_CPU = 0;
     private final static int SORT_BY_MEM = 1;

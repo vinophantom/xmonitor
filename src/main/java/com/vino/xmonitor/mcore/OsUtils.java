@@ -1,24 +1,19 @@
 package com.vino.xmonitor.mcore;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.stream.IntStream;
 
 import com.vino.xmonitor.bean.NetSpeed;
 import com.vino.xmonitor.bean.hardware.Storage;
 import com.vino.xmonitor.bean.soft.Process;
 
-import org.hyperic.sigar.Cpu;
 import org.hyperic.sigar.CpuInfo;
 import org.hyperic.sigar.CpuPerc;
 import org.hyperic.sigar.FileSystem;
@@ -26,9 +21,7 @@ import org.hyperic.sigar.FileSystemUsage;
 import org.hyperic.sigar.Mem;
 import org.hyperic.sigar.NetConnection;
 import org.hyperic.sigar.NetFlags;
-import org.hyperic.sigar.NetInterfaceConfig;
 import org.hyperic.sigar.NetInterfaceStat;
-import org.hyperic.sigar.OperatingSystem;
 import org.hyperic.sigar.ProcCredName;
 import org.hyperic.sigar.ProcMem;
 import org.hyperic.sigar.ProcState;
@@ -37,15 +30,14 @@ import org.hyperic.sigar.ProcUtil;
 import org.hyperic.sigar.Sigar;
 import org.hyperic.sigar.SigarException;
 import org.hyperic.sigar.SigarProxy;
-import org.hyperic.sigar.Swap;
-import org.hyperic.sigar.Who;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.vino.xmonitor.utils.StringUtils;
 
 /**
  * @author phantom
  */
-public class OsUtils {
+public final class OsUtils {
 
     private static Logger logger = LoggerFactory.getLogger(OsUtils.class);
 
@@ -102,7 +94,6 @@ public class OsUtils {
                 continue;
             }
         }
-        // logger.info("====================");
         return res;
     }
 
@@ -152,10 +143,10 @@ public class OsUtils {
         try {
             ProcMem mem = sigar.getProcMem(pid);
             // info：占用内存
-            //noinspection deprecation
+            //noinspection deprecation,AliDeprecation
             p.setMem(mem.getRss() + mem.getShare());
             // info：所占用固定内存
-            //noinspection deprecation
+            //noinspection deprecation,AliDeprecation
             p.setRss(mem.getRss());
             // info：
             p.setShare(mem.getShare());
@@ -175,7 +166,7 @@ public class OsUtils {
 
         // info：名字
         String cmd = ProcUtil.getDescription(sigar, pid);
-        String[] args = cmd.split(" ");
+        String[] args = StringUtils.split(cmd," ");
         if (0 != args.length){
             p.setName(args[0]);
         } else {
@@ -275,6 +266,7 @@ public class OsUtils {
         }
 
         long currTime = System.currentTimeMillis();
+        @SuppressWarnings("Unchecked")
         double downSpeed = (rxBytes - lastTimeRxBytes)*1000 / (currTime - lastGetSpeedTime) ;
         double upSpeed = (txBytes - lastTimeTxBytes)*1000 / (currTime - lastGetSpeedTime) ;
         lastGetSpeedTime = currTime;

@@ -5,7 +5,7 @@ package com.vino.xmonitor.mcore;
  *
  * @author phantom
  */
-public class OsInfo {
+public final class OsInfo {
 
     private static String OS = System.getProperty("os.name").toLowerCase();
 

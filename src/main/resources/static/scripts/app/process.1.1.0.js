@@ -108,13 +108,11 @@ let sendWebSocketDataRequest = function (dataname, args) {
     //1表示连接上，
     if (websocket.readyState === 1) {
         const msg = new WSMessage("get", args.join(","), dataname);
-        // websocket.addEventListener('open', function () {
-        // socket.send(message)
-
         websocket.send(JSON.stringify(msg));
     } else {
         setTimeout(function () {
-            sendWebSocketDataRequest(dataname)
+            const msg = new WSMessage("get", args.join(","), dataname);
+            websocket.send(JSON.stringify(msg));
         }, 1000);
     }
 };
@@ -123,8 +121,8 @@ let sendWebSocketDataRequest = function (dataname, args) {
  * 发送对系统信息的请求
  */
 let sendProcessesRequest = function () {
-
-    sendWebSocketDataRequest("processes")
+    const sortArg = $("#sort-arg").val();
+    sendWebSocketDataRequest("processes", [sortArg])
 };
 
 
@@ -144,7 +142,6 @@ const setIntervals = function() {
 
 let clearGetDataInterval = function () {
     if (window.intervals.getDataInterval) window.clearInterval(window.intervals.getDataInterval);
-    // if (window.intervals.getNetSpeedInterval) window.clearInterval(window.intervals.getNetSpeedInterval);
 };
 
 
@@ -226,6 +223,4 @@ $(document).ready(function () {
     initNavi();
     //设置定时器
     setIntervals();
-    //初始化按钮
-    // initButton();
 });

@@ -22,7 +22,7 @@ import java.util.List;
  * @author phantom
  */
 @Service
-public class CpuService {
+public final class CpuService {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 

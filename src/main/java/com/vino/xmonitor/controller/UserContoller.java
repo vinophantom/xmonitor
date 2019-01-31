@@ -18,8 +18,12 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserContoller {
 
+    private final UserService userService;
+
     @Autowired
-    private UserService userService;
+    public UserContoller(UserService userService) {
+        this.userService = userService;
+    }
     // @Autowired
     // private CpuService cpuService;
 
