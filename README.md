@@ -1,7 +1,7 @@
 # xmonitor
 
 
-[![CI](https://img.shields.io/travis/vinophantom/xmonitor.svg)](https://travis-ci.org/vinophantom/xmonitor)
+[![CI](https://img.shields.io/travis/vinophantom/xmonitor.svg?style=popout)](https://travis-ci.org/vinophantom/xmonitor)
 [![](https://img.shields.io/github/followers/vinophantom.svg?style=social)](https://github.com/vinophantom)
 
 ---
