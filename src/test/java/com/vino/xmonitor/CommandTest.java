@@ -1,13 +1,14 @@
 package com.vino.xmonitor;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import com.vino.xmonitor.mcore.OsUtils;
 
+import com.vino.xmonitor.mcore.SigarHolder;
 import org.hyperic.sigar.DirUsage;
 import org.hyperic.sigar.FileInfo;
 import org.hyperic.sigar.NetConnection;
@@ -26,6 +27,7 @@ import org.hyperic.sigar.Tcp;
 import org.hyperic.sigar.cmd.Netstat;
 import org.hyperic.sigar.cmd.Ps;
 import org.hyperic.sigar.cmd.Shell;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -36,6 +38,30 @@ import org.junit.Test;
  */
 
 public class CommandTest {
+    @Before
+    public void init() {
+        System.out.println("==================================############################=================================");
+        // Linux MacOS 分隔符 : Windows 是;
+        String osName = System.getProperty("os.name", "generic").toLowerCase();
+        String splitSymbol = osName.contains("win") ? ";" : ":";
+
+        // 寻找 classpath 根目录下的 sigar 文件夹
+        URL sigarURL = SigarHolder.class.getResource("/sigar");
+        if (null == sigarURL) {
+            // 找不到抛异常
+            throw new MissingResourceException("miss classpath:/sigar folder", SigarHolder.class.getName(), "classpath:/sigar");
+        }
+
+        File classPath = new File(sigarURL.getFile());
+        String oldLibPath = System.getProperty("java.library.path");
+
+        try {
+            // 追加库路径
+            String newLibPath = oldLibPath + splitSymbol + classPath.getCanonicalPath();
+            System.setProperty("java.library.path", newLibPath);
+        } catch (IOException e) {
+        }
+    }
     @Test
     public void testPs() throws Exception {
         Sigar sigar = new Sigar();
@@ -267,25 +293,25 @@ public class CommandTest {
     public void cpu() throws InterruptedException {
         int busyTime = 10;
 		int idleTime = busyTime;
-
-		while(true){
-			long startTime = System.currentTimeMillis();
-			//busy loop:
-			while((System.currentTimeMillis()-startTime)<=busyTime)
-				;
-			Thread.sleep(idleTime);
-        }
+//
+//		while(true){
+//			long startTime = System.currentTimeMillis();
+//			//busy loop:
+//			while((System.currentTimeMillis()-startTime)<=busyTime)
+//				;
+//			Thread.sleep(idleTime);
+//        }
     }
 
     @Test
     public void testCPU() throws InterruptedException, SigarException {
         Sigar sigar = new Sigar();
-        while (true) {
-                Thread.sleep(1000L);
-                ProcCpu p = sigar.getProcCpu(7656L);
-                System.out.println(p.getPercent()  + "  " + p.getUser());
-                
-            }
+//        while (true) {
+//                Thread.sleep(1000L);
+//                ProcCpu p = sigar.getProcCpu(7656L);
+//                System.out.println(p.getPercent()  + "  " + p.getUser());
+//
+//            }
     }
 
 }

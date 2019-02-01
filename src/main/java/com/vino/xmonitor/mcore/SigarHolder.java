@@ -11,11 +11,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.MissingResourceException;
 
-class SigarHolder {
+public class SigarHolder {
 
     private static Logger logger = LoggerFactory.getLogger(SigarHolder.class);
     static {
-
+        System.out.println("==================================############################=================================");
         // Linux MacOS 分隔符 : Windows 是;
         String osName = System.getProperty("os.name", "generic").toLowerCase();
         String splitSymbol = osName.contains("win") ? ";" : ":";
@@ -65,8 +65,5 @@ class SigarHolder {
     static Sigar getSigarInstance() {
         return (Sigar) temp.next().value();
     }
-
-
-
 
 }
