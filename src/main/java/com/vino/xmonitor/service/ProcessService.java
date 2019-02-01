@@ -38,6 +38,7 @@ public final class ProcessService {
 
     public List <Process> getProcessList(String... args) throws SigarException {
 
+
         List<Process> list = OsUtils.getProcs();
         int sortFlag = SORT_BY_MEM;
         for (String arg : args) {

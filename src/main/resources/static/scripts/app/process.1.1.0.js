@@ -107,11 +107,11 @@ let sendWebSocketDataRequest = function (dataname, args) {
     //需要先判断websocket的连接状态
     //1表示连接上，
     if (websocket.readyState === 1) {
-        const msg = new WSMessage("get", args.join(","), dataname);
+        const msg = new WSMessage("get,"+ args.join(","), null, dataname);
         websocket.send(JSON.stringify(msg));
     } else {
         setTimeout(function () {
-            const msg = new WSMessage("get", args.join(","), dataname);
+            const msg = new WSMessage("get," + args.join(","), null, dataname);
             websocket.send(JSON.stringify(msg));
         }, 1000);
     }
@@ -162,7 +162,7 @@ const setProcessesTable = function(data) {
         tr.append("<td>" + p.mem + "</td>");
         tr.append("<td>" + p.share + "</td>");
         tr.append("<td>" + p.startTime + "</td>");
-        tr.append("<td><button type='button' class='btn btn-accent btn-pill kill-proc-btn' >结束进程</button></td>");
+        tr.append("<td><button type='button' class='btn btn-accent btn-pill kill-proc-btn' >结束</button></td>");
         tbody.append(tr);
     });
     initButton();

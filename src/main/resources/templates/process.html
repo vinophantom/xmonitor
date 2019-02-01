@@ -27,6 +27,34 @@
         text-align: center;
     }
 
+
+    @media screen and (max-width: 901px) {
+        table thead tr th:nth-child(1) {
+            display: none;
+        }
+        table thead tr th:nth-child(3) {
+            display: none;
+        }
+        table thead tr th:nth-child(6) {
+             display: none;
+        }
+        table thead tr th:nth-child(7) {
+              display: none;
+        }
+        table tr td:nth-child(1) {
+            display: none;
+        }
+        table tr td:nth-child(3) {
+            display: none;
+        }
+        table tr td:nth-child(6) {
+            display: none;
+        }
+        table tr td:nth-child(7) {
+            display: none;
+        }
+    }
+
     /*table tr td:nth-child(2) {*/
         /**/
     /*}*/
@@ -70,12 +98,12 @@
                 <table id="processes-table" class="table mb-0">
                     <thead class="bg-light">
                     <tr>
-                        <th scope="col" class="border-0" width="5%">Pid</th>
+                        <th scope="col" class="border-0" width="8%">Pid</th>
                         <th scope="col" class="border-0" width="30%">名称</th>
                         <th scope="col" class="border-0" width="8%">用户</th>
                         <!-- <th scope="col" class="border-0">状态</th> -->
-                        <th scope="col" class="border-0" width="8%">CPU</th>
-                        <th scope="col" class="border-0" width="8%">内存</th>
+                        <th scope="col" class="border-0" >CPU</th>
+                        <th scope="col" class="border-0" >内存</th>
                         <!-- <th scope="col" class="border-0">固定内存</th> -->
                         <th scope="col" class="border-0">共享内存</th>
                         <th scope="col" class="border-0">开始时间</th>

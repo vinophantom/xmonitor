@@ -153,7 +153,7 @@ public class DataSocketServer {
             }
         } catch (Exception e) {
             sendObj(session, DataResult.error(CodeMsg.SERVER_ERROR));
-            logger.error("数据分发失败", e);
+            logger.error("数据分发失败:" + e.getMessage(), e);
         }
 
     }
