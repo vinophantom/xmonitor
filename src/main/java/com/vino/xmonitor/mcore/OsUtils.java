@@ -66,7 +66,7 @@ public final class OsUtils {
      * @return
      */
     public static boolean isPortAvailable(int port) throws SigarException {
-        Sigar sigar = new Sigar();
+        Sigar sigar = SigarHolder.getSigarInstance();
         if (MIN_PORT_NUMBER > port || MAX_PORT_NUMBER < port) {return false;}
         int flags = NetFlags.CONN_TCP | NetFlags.CONN_SERVER | NetFlags.CONN_CLIENT;
         NetConnection[] netConnectionList = sigar.getNetConnectionList(flags);
@@ -279,7 +279,7 @@ public final class OsUtils {
     public static Map<String,Object> getSysInfo () throws SigarException, UnknownHostException {
 
         Map<String, Object> res = new HashMap<>(16);
-        Sigar sigar = new Sigar();
+        Sigar sigar = SigarHolder.getSigarInstance();
 
         Properties props = System.getProperties();
 

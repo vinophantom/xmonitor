@@ -29,6 +29,9 @@ import org.hyperic.sigar.cmd.Ps;
 import org.hyperic.sigar.cmd.Shell;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * uptime 命令显示当前时间、系统正常运行的时间长度、联机用户数目和平均负载。负载平均值是以 1 分钟、5 分钟、15 分钟时间间隔开头的可运行的进程。uptime 命令的输出实质上就是 w 命令提供的标题行。
@@ -36,7 +39,8 @@ import org.junit.Test;
  * 
  * 
  */
-
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class CommandTest {
     @Before
     public void init() {
@@ -64,7 +68,7 @@ public class CommandTest {
     }
     @Test
     public void testPs() throws Exception {
-        Sigar sigar = new Sigar();
+        Sigar sigar = SigarHolder.getSigarInstance();
         for (double v : sigar.getLoadAverage()) {
             System.out.println(v);
         }
@@ -88,7 +92,7 @@ public class CommandTest {
 
     @Test
     public void testPs1() throws SigarException {
-        Sigar sigar = new Sigar();
+        Sigar sigar = SigarHolder.getSigarInstance();
         Shell shell = new Shell();
         String[] args = {};
         Ps ps = new Ps();
@@ -242,7 +246,7 @@ public class CommandTest {
 
         int flags = NetFlags.CONN_TCP | NetFlags.CONN_SERVER | NetFlags.CONN_CLIENT;
 
-        Sigar sigar = new Sigar();
+        Sigar sigar = SigarHolder.getSigarInstance();
         NetConnection[] netConnections = sigar.getNetConnectionList(flags);
         System.out.println(netConnections);
         long port = sigar.getProcPort(NetFlags.getConnectionProtocol("tcp"),9051L);
@@ -254,7 +258,7 @@ public class CommandTest {
 
     @Test
     public void name() throws SigarException , InterruptedException {
-        Sigar sigar = new Sigar();
+        Sigar sigar = SigarHolder.getSigarInstance();
         // String[] p = sigar.getProcArgs(15908L);
         ProcExe p = sigar.getProcExe(15908L);
         int flags = NetFlags.CONN_TCP | NetFlags.CONN_SERVER | NetFlags.CONN_CLIENT;
@@ -272,7 +276,7 @@ public class CommandTest {
     }
     @Test
     public void testget() throws SigarException {
-        Sigar sigar = new Sigar();
+        Sigar sigar = SigarHolder.getSigarInstance();
         long pid = 7106;
         Object o = sigar.getProcArgs(pid);
         System.out.println(o);
@@ -305,7 +309,7 @@ public class CommandTest {
 
     @Test
     public void testCPU() throws InterruptedException, SigarException {
-        Sigar sigar = new Sigar();
+        Sigar sigar = SigarHolder.getSigarInstance();
 //        while (true) {
 //                Thread.sleep(1000L);
 //                ProcCpu p = sigar.getProcCpu(7656L);

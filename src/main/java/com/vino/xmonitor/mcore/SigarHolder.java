@@ -15,7 +15,6 @@ public class SigarHolder {
 
     private static Logger logger = LoggerFactory.getLogger(SigarHolder.class);
     static {
-        System.out.println("==================================############################=================================");
         // Linux MacOS 分隔符 : Windows 是;
         String osName = System.getProperty("os.name", "generic").toLowerCase();
         String splitSymbol = osName.contains("win") ? ";" : ":";
@@ -29,7 +28,7 @@ public class SigarHolder {
 
         File classPath = new File(sigarURL.getFile());
         String oldLibPath = System.getProperty("java.library.path");
-
+//        System.load(SigarHolder.class.getClassLoader().getResource("/").getPath() + "/sigar/");
         try {
             // 追加库路径
             String newLibPath = oldLibPath + splitSymbol + classPath.getCanonicalPath();
@@ -62,7 +61,7 @@ public class SigarHolder {
      * 获取Sigar实例
      * @return
      */
-    static Sigar getSigarInstance() {
+    public static Sigar getSigarInstance() {
         return (Sigar) temp.next().value();
     }
 

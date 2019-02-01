@@ -1,5 +1,6 @@
 package com.vino.xmonitor;
 
+import com.vino.xmonitor.mcore.SigarHolder;
 import org.hyperic.sigar.*;
 import org.hyperic.sigar.cmd.Ps;
 import org.hyperic.sigar.cmd.Shell;
@@ -20,7 +21,7 @@ class Top {
     }
 
     public static void main(String[] args) throws Exception {
-        Sigar sigarImpl = new Sigar();
+        Sigar sigarImpl = SigarHolder.getSigarInstance();
         SigarProxy sigar = SigarProxyCache.newInstance(sigarImpl, 5000);
 
         while(true) {
@@ -37,7 +38,6 @@ class Top {
             for(int i = 0; i < pids.length; ++i) {
                 long pid = pids[i];
                 String cpuPerc = "?";
-
                 List info;
                 try {
                     info = Ps.getInfo(sigar, pid);

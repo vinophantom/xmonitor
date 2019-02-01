@@ -1,12 +1,16 @@
 package com.vino.xmonitor;
 
 import com.vino.xmonitor.controller.encoder.CpuCoreEncoder;
+import com.vino.xmonitor.mcore.SigarHolder;
 import org.hyperic.sigar.*;
 import org.hyperic.sigar.cmd.CpuInfo;
 import org.hyperic.sigar.cmd.Netstat;
 import org.hyperic.sigar.cmd.Ps;
 import org.hyperic.sigar.cmd.Shell;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,6 +23,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class CommonTest {
 
 
@@ -104,7 +110,7 @@ public class CommonTest {
      */
     @Test
     public void testKill() throws SigarException {
-        Sigar sigar = new Sigar();
+        Sigar sigar = SigarHolder.getSigarInstance();
         sigar.kill(25295L, 1);
     }
 
@@ -115,21 +121,21 @@ public class CommonTest {
      */
     @Test
     public void testGetFQDN() throws SigarException {
-        Sigar sigar = new Sigar();
+        Sigar sigar = SigarHolder.getSigarInstance();
         System.out.println(sigar.getFQDN());
         
     }
 
     @Test
     public void testWho() throws SigarException {
-        Sigar sigar = new Sigar();
+        Sigar sigar = SigarHolder.getSigarInstance();
         Who[] whos = sigar.getWhoList();
         System.out.println(whos);
     }
 
     @Test
     public void testPs() throws SigarException {
-        Sigar sigar = new Sigar();
+        Sigar sigar = SigarHolder.getSigarInstance();
         Uptime uptime = sigar.getUptime();
         System.out.println(uptime);
 
@@ -140,7 +146,7 @@ public class CommonTest {
     public void test4() throws SigarException {
         StringBuilder sb = new StringBuilder(200);
 
-        Sigar sigar = new Sigar();
+        Sigar sigar = SigarHolder.getSigarInstance();
 
         String[] type = new String[]{"State.Name.sw=java"};
         long[] pids = Shell.getPids(sigar, type);
@@ -181,7 +187,7 @@ public class CommonTest {
     private List<ProcessInfo> getProcessInfo() {
 
         Ps ps = new Ps();
-        Sigar sigar = new Sigar();
+        Sigar sigar = SigarHolder.getSigarInstance();
 
         List<ProcessInfo> processInfos = new ArrayList<ProcessInfo>();
 
@@ -402,7 +408,7 @@ public class CommonTest {
 
     @Test
     public void test5() throws SigarException {
-        Sigar sigar = new Sigar();
+        Sigar sigar = SigarHolder.getSigarInstance();
         long[] pids = sigar.getProcList();
         System.out.println(pids.length);
 //        sigar.getProcPort()
@@ -423,7 +429,7 @@ public class CommonTest {
 
 //        String ip = getAddress().toString().replace("/","");
         String ip = "";
-        Sigar sigar = new Sigar();
+        Sigar sigar = SigarHolder.getSigarInstance();
         String[] ifNames = sigar.getNetInterfaceList();
         long rxbps = 0;
         long txbps = 0;
