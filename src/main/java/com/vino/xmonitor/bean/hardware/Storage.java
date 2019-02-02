@@ -1,5 +1,7 @@
 package com.vino.xmonitor.bean.hardware;
 
+import com.vino.xmonitor.mcore.OsUtils;
+
 /**
  * @author phantom
  */
@@ -32,6 +34,10 @@ public class Storage {
     private double diskQueue = 0.0D;
     private double diskServiceTime = 0.0D;
     private double usePercent = 0.0D;
+
+    public static void update() {
+        OsUtils.getMem();
+    }
 
     public Storage(String dirName, String devName, String typeName, String sysTypeName, String options, int type, long flags) {
         this.dirName = dirName;

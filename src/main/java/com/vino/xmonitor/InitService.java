@@ -1,10 +1,12 @@
 package com.vino.xmonitor;
 
 import java.net.UnknownHostException;
+import java.util.Map;
 
 import com.vino.xmonitor.bean.hardware.Memory;
 import com.vino.xmonitor.bean.soft.System;
 import com.vino.xmonitor.cache.CacheHelper;
+import com.vino.xmonitor.mcore.OsUtils;
 import com.vino.xmonitor.service.MemService;
 import com.vino.xmonitor.service.SysService;
 
@@ -36,14 +38,8 @@ public class InitService implements ApplicationRunner {
     private void loadSysInfo (SysService sysService, MemService memService) {
         try {
             logger.info("Loading Cache(System Main Information)...");
-            System system = sysService.getSysInfo();
             Memory mem = memService.getMem();
-            CacheHelper.saveToPersisCache("current_system", system.getSys());
-            CacheHelper.saveToPersisCache("num_of_cores", system.getNumOfCores());
             CacheHelper.saveToPersisCache("total_mem", mem.getTotal());
-            
-        } catch (UnknownHostException e) {
-            logger.error("Unknown Host", e);
         } catch (SigarException e) {
             logger.error("Loading Info Error", e);
         } catch (Exception e) {

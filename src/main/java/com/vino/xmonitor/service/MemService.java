@@ -13,22 +13,7 @@ import org.springframework.stereotype.Service;
 public class MemService {
 
     public Memory getMem() throws SigarException {
-        try {
-            Mem mem = OsUtils.getMem();
-            return new Memory(
-                mem.getTotal(),
-                mem.getRam(),
-                mem.getUsed(),
-                mem.getFree(),
-                mem.getActualUsed(),
-                mem.getActualFree(),
-                mem.getUsedPercent(),
-                mem.getFreePercent()
-            );
-        } catch (SigarException e) {
-            e.printStackTrace();
-            throw e;
-        }
+        return Memory.getInstance();
     }
 
 }

@@ -26,53 +26,13 @@ public final class CpuService {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public List<CpuCore> getCpuCores(String... args) throws SigarException {
-        try {
-            @SuppressWarnings("unchecked")
-            List<CpuCore> list = (List<CpuCore>) CacheHelper.getFromPersisCache(DataNames.CPU_CORES_NAME);
-            if (list == null) {
-                return getCpuCoresFromSys();
-            } else {
-                return list;
-            }
-        } catch (SigarException e) {
-            logger.error(e.getMessage(), e);
-            throw e;
-        } catch (Exception e) {
-            logger.error("Get Process List Error!", e);
-            throw e;
-        }
 
-    }
-
-
-    public List<CpuCore> getCpuCoresFromSys(String... args) throws SigarException {
-        List<CpuCore> res = new ArrayList<>();
-        CpuPerc[] cs = OsUtils.getCpuPerc();
-        Arrays.stream(cs).forEach(c -> {
-            res.add(new CpuCore(
-                    c.getUser(),
-                    c.getSys(),
-                    c.getNice(),
-                    c.getWait(),
-                    c.getIdle(),
-                    c.getIrq(),
-                    c.getSoftIrq(),
-                    c.getStolen(),
-                    c.getCombined()
-            ));
-        });
-        return res;
+    public CpuCore[] getCpuCores(String... args) {
+        return Cpu.getCpuCores();
     }
 
     public Cpu getCpu() throws SigarException {
-        try {
-            CpuInfo cpuInfo = OsUtils.getCpu();
-            return new Cpu(cpuInfo.getMhz(), cpuInfo.getVendor(), cpuInfo.getModel(), cpuInfo.getTotalCores());
-        } catch (SigarException e) {
-            logger.error(e.getMessage(), e);
-            throw e;
-        }
+        return Cpu.getInstance();
     }
 
 }

@@ -1,6 +1,8 @@
 package com.vino.xmonitor.schedule;
 
 
+import com.vino.xmonitor.bean.hardware.Cpu;
+import com.vino.xmonitor.bean.hardware.Memory;
 import com.vino.xmonitor.cache.CacheHelper;
 import com.vino.xmonitor.constant.DataNames;
 import com.vino.xmonitor.service.CpuService;
@@ -27,17 +29,24 @@ public class DataLoadScheduleService {
         this.cpuService = cpuService;
         this.netService = netService;
     }
-
-    @Scheduled(fixedRate = ONE_SECOND)
-    public void loadCpuSituation () throws SigarException {
-        CacheHelper.deleteFromPersisCache(DataNames.CPU_CORES_NAME);
-        CacheHelper.saveToPersisCache(DataNames.CPU_CORES_NAME, cpuService.getCpuCoresFromSys());
-    }
+//
+//    @Scheduled(fixedRate = ONE_SECOND)
+//    public void loadCpuSituation () throws SigarException {
+//    }
 
     @Scheduled(fixedDelay = THREE_SECOND)
     public void loadNetSpeed () throws SigarException {
         CacheHelper.deleteFromPersisCache(DataNames.NET_SPEED_NAME);
         CacheHelper.saveToPersisCache(DataNames.NET_SPEED_NAME, netService.getCurrNetSpeed());
     }
+
+
+    @Scheduled(fixedDelay = ONE_SECOND)
+    public void update () {
+        Memory.update();
+        Cpu.updateCpuCores();
+//        Cpu.update();
+    }
+
 
 }

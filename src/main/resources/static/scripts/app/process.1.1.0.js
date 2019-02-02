@@ -41,6 +41,8 @@ function initWebSocket() {
 
     websocket.onopen = function () {
         // sendSysRequest();
+        //设置定时器
+        setIntervals();
     };
 
     websocket.onclose = function () {
@@ -221,6 +223,5 @@ $(document).ready(function () {
     initWebSocket();
     //初始化导航栏
     initNavi();
-    //设置定时器
-    setIntervals();
+
 });

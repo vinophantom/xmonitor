@@ -50,6 +50,8 @@ public class ProcessController extends ControllerBase {
     @ResponseBody
     public String process(HttpServletRequest request, HttpServletResponse response, ModelMap map) {
 
+
+
         try {
             IContext iContext = new WebContext(request, response, request.getServletContext(),request.getLocale());
 
@@ -75,11 +77,9 @@ public class ProcessController extends ControllerBase {
         } catch (Exception e) {
             //TODO: handle exception
             logger.error(e.getMessage(), e);
-            return Result.error(CodeMsg.SERVER_ERROR);
+            return Result.error(new CodeMsg(500, e.getMessage()));
         }
         return Result.success("进程已结束！");
     }
-
-
 
 }

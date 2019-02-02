@@ -43,17 +43,21 @@ public final class OsUtils {
 
 
     // TODO: 端口范围判断
+    /**
+     * 最小端口
+     */
     private final static int MIN_PORT_NUMBER = 0;
+    /**
+     * 最大端口
+     */
     private final static int MAX_PORT_NUMBER = 65535;
     private static long lastGetSpeedTime = System.currentTimeMillis();
 
     private static long lastTimeRxBytes = 0L;
     private static long lastTimeTxBytes = 0L;
+//    public static int getNetSpeedCounts = 0;
 
-    public static int getNetSpeedCounts = 0;
 
-    // private static OperatingSystemMXBean mxbean =
-    //         (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
 
 
 
@@ -98,19 +102,21 @@ public final class OsUtils {
     }
 
 
-
-
     public static void killProc(long pid) throws SigarException {
         Sigar sigar = SigarHolder.getSigarInstance();
+        // kill -9
         sigar.kill(pid, 9);
     }
+
 
     public static void killProc(String pid) throws SigarException {
         Sigar sigar = SigarHolder.getSigarInstance();
-        sigar.kill(pid, 9);
+        try {
+            sigar.kill(pid, 9);
+        } catch (SigarException e) {
+            throw e;
+        }
     }
-
-
 
 
     public static Process getProcObj(SigarProxy sigar, long pid) throws SigarException {
@@ -276,19 +282,25 @@ public final class OsUtils {
     }
 
 
-    public static Map<String,Object> getSysInfo () throws SigarException, UnknownHostException {
+    public static Map<String,Object> getSysInfo () throws SigarException{
 
         Map<String, Object> res = new HashMap<>(16);
         Sigar sigar = SigarHolder.getSigarInstance();
 
         Properties props = System.getProperties();
 
-        InetAddress addr = InetAddress.getLocalHost();
-
+        InetAddress addr = null;
+        String currentIP = null;
+        try {
+            addr = InetAddress.getLocalHost();
+            currentIP = addr.getHostAddress();
+        } catch (UnknownHostException e) {
+            logger.warn("获取主机名失败！");
+        }
         res.put("sys", props.getProperty("os.name"));
         res.put("numOfCore", sigar.getCpuInfoList().length);
         res.put("arch", props.getProperty("os.arch"));
-        res.put("currentIP", addr.getHostAddress());
+        res.put("currentIP", currentIP);
         res.put("home", props.getProperty("user.home"));
         res.put("version", props.getProperty("os.version"));
         res.put("computerName", getHostName());
@@ -297,12 +309,12 @@ public final class OsUtils {
     }
 
     private static String getCurrentUser() {
-        Map<String, String> map = System.getenv();
-            if(map.get("USERNAME") != null) {
-                return map.get("USERNAME");
-            } else {
-                return map.get("LOGNAME");
-            }
+        String username = System.getenv("USERNAME");
+        if(username != null) {
+            return username;
+        } else {
+            return System.getenv("LOGNAME");
+        }
     }
 
 
@@ -330,16 +342,36 @@ public final class OsUtils {
         }
     }
 
-    public static CpuInfo getCpu() throws SigarException {
-        return OsHolder.getCpuInfo()[0];
+    public static CpuInfo getCpu() {
+        try {
+            CpuInfo[] cpuInfos = OsHolder.getCpuInfo();
+            if (cpuInfos != null && cpuInfos.length > 0) {
+                return OsHolder.getCpuInfo()[0];
+            } else {
+                return null;
+            }
+        } catch (SigarException e) {
+            logger.error("get CPU Error", e);
+        }
+        return null;
     }
 
-    public static CpuPerc[] getCpuPerc() throws SigarException {
-        return OsHolder.getCpuPercList();
+    public static CpuPerc[] getCpuPerc() {
+        try {
+            return OsHolder.getCpuPercList();
+        } catch (SigarException e) {
+            logger.error("get CPU Core Error!", e);
+        }
+        return null;
     }
 
 
-    public static Mem getMem() throws SigarException {
-        return OsHolder.getMem();
+    public static Mem getMem() {
+        try {
+            return OsHolder.getMem();
+        } catch (SigarException e) {
+            logger.error("get Mem Error!", e);
+        }
+        return null;
     }
 }

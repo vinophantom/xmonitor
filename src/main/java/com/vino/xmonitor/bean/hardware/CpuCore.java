@@ -19,7 +19,7 @@ public class CpuCore {
     public CpuCore() {
     }
 
-    public CpuCore(double userUsage, double sytemUsage, double nice, double wait, double idle, double irq, double softirq, double stolen, double combined) {
+    CpuCore(double userUsage, double sytemUsage, double nice, double wait, double idle, double irq, double softirq, double stolen, double combined) {
         this.userUsage = userUsage;
         this.sytemUsage = sytemUsage;
         this.nice = nice;

@@ -1,5 +1,8 @@
 package com.vino.xmonitor.bean.hardware;
 
+import com.vino.xmonitor.mcore.OsUtils;
+import org.hyperic.sigar.Mem;
+
 /**
  * @author phantom
  */
@@ -14,8 +17,34 @@ public class Memory {
     private double usedPercent = 0.0D;
     private double freePercent = 0.0D;
 
+    private static Memory instance;
+
+    public static Memory getInstance() {
+        return instance;
+    }
+
+    public static void update() {
+        Mem mem = OsUtils.getMem();
+        instance = new Memory(
+                mem.getTotal(),
+                mem.getRam(),
+                mem.getUsed(),
+                mem.getFree(),
+                mem.getActualUsed(),
+                mem.getActualFree(),
+                mem.getUsedPercent(),
+                mem.getFreePercent()
+        );
+    }
+
+    static {
+        update();
+    }
+
+
     public Memory() {
     }
+
 
     public Memory(long total, long ram, long used, long free, long actualUsed, long actualFree, double usedPercent, double freePercent) {
         this.total = total;
