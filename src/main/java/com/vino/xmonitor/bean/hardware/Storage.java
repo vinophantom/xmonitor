@@ -35,8 +35,10 @@ public class Storage {
     private double diskServiceTime = 0.0D;
     private double usePercent = 0.0D;
 
+
+
     public static void update() {
-        OsUtils.getMem();
+        OsUtils.getStorages();
     }
 
     public Storage(String dirName, String devName, String typeName, String sysTypeName, String options, int type, long flags) {

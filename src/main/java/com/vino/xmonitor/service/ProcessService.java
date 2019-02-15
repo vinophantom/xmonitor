@@ -2,6 +2,7 @@ package com.vino.xmonitor.service;
 
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,11 +64,7 @@ public final class ProcessService {
 
     private void sortProcByCpu(List<Process> li) {
         li.sort((p1, p2) -> {
-            if(p1 == null && p2 == null) {
-                return 0;
-            } else if(p1 == null) {
-                return -1;
-            } else if(p2 == null) {
+            if(p1 == null || p2 == null) {
                 return 1;
             }
             double c1 = p1.getCpuUsage();
@@ -77,13 +74,7 @@ public final class ProcessService {
     }
     private void sortProcByMem(List<Process> li) {
         li.sort((p1, p2) -> {
-            if(p1 == null && p2 == null) {
-                return 0;
-            }
-            if(p1 == null) {
-                return -1;
-            }
-            if(p2 == null) {
+            if(p1 == null || p2 == null) {
                 return 1;
             }
             long m1 = p1.getMem();
@@ -134,16 +125,24 @@ public final class ProcessService {
         return (size >> 20) + "MiB";
     }
     private String convertTime(long t) {
+        // TODO
+        BigDecimal d = BigDecimal.valueOf(t);
         if(t < 1000) {
             return "< 1s";
-        } else if(t < 60000) {
-            return Math.round((double)(t / 1000)) + "s";
-        } else if(t < 36000000) {
-            return Math.round((double)(t / 60000)) + "m";
-        } else if(t < 864000000) {
-            return Math.round((double)(t / 36000000)) + "h";
+        } else if(60000 > t) {
+            return d.divide(BigDecimal.valueOf(1000), 2, RoundingMode.HALF_UP).toString();
+//            return Math.round((double)(t / 1000)) + "s";
+        } else if(36000000 > t) {
+            return d.divide(BigDecimal.valueOf(60000), 2, RoundingMode.HALF_UP).toString();
+//            return Math.round((double)(t / 60000)) + "m";
+        } else if(864000000 > t) {
+            return d.divide(BigDecimal.valueOf(36000000), 2, RoundingMode.HALF_UP).toString();
+
+//            return Math.round((double)(t / 36000000)) + "h";
         } else {
-            return Math.round(t / 864000000) + "day";
+            return d.divide(BigDecimal.valueOf(864000000), 2, RoundingMode.HALF_UP).toString();
+//            String s = Math.round(t / 864000000) + "day";
+//            return s;
         }
     }
  

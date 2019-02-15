@@ -1,14 +1,10 @@
 package com.vino.xmonitor.mcore;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import com.vino.xmonitor.bean.NetSpeed;
 import com.vino.xmonitor.bean.hardware.Storage;
@@ -89,13 +85,10 @@ public final class OsUtils {
 
         long[] pids = sigar.getProcList();
         List <Process> res = new ArrayList<Process>();
-        for(int i = 0; i < pids.length; ++i) {
-            long pid = pids[i];
+        for (long pid : pids) {
             Process p = getProcObj(sigar, pid);
             if (p != null) {
                 res.add(p);
-            } else {
-                continue;
             }
         }
         return res;
@@ -111,11 +104,7 @@ public final class OsUtils {
 
     public static void killProc(String pid) throws SigarException {
         Sigar sigar = SigarHolder.getSigarInstance();
-        try {
-            sigar.kill(pid, 9);
-        } catch (SigarException e) {
-            throw e;
-        }
+        sigar.kill(pid, 9);
     }
 
 
@@ -173,7 +162,7 @@ public final class OsUtils {
         // info：名字
         String cmd = ProcUtil.getDescription(sigar, pid);
         String[] args = StringUtils.split(cmd," ");
-        if (0 != args.length){
+        if (0 != Objects.requireNonNull(args).length){
             p.setName(args[0]);
         } else {
             int i = cmd.indexOf("--");
@@ -198,14 +187,19 @@ public final class OsUtils {
 
 
 
-    public static List<Storage> getStorages () throws SigarException {
-        FileSystem[] fileSystems = OsHolder.getFileSystem();
+    public static List<Storage> getStorages () {
+        FileSystem[] fileSystems = new FileSystem[0];
+        try {
+            fileSystems = OsHolder.getFileSystem();
+        } catch (SigarException e) {
+            logger.error("获取文件系统信息失败！", e);
+        }
         List<Storage> res  = new ArrayList<>();
 
         Arrays.stream(fileSystems).forEach(fs -> {
             int type = fs.getType();
             String dirName = fs.getDirName();
-            // TODO
+
             if (type != 5) {
                 FileSystemUsage usage = null;
                 try {
@@ -272,9 +266,21 @@ public final class OsUtils {
         }
 
         long currTime = System.currentTimeMillis();
-        @SuppressWarnings("Unchecked")
-        double downSpeed = (rxBytes - lastTimeRxBytes)*1000 / (currTime - lastGetSpeedTime) ;
-        double upSpeed = (txBytes - lastTimeTxBytes)*1000 / (currTime - lastGetSpeedTime) ;
+        double downSpeed = BigDecimal.valueOf(rxBytes)
+                .add(BigDecimal.valueOf(lastTimeRxBytes).negate())
+                .multiply(BigDecimal.valueOf(1000))
+                .divide(BigDecimal.valueOf(currTime).add(BigDecimal.valueOf(lastGetSpeedTime).negate()),
+                        64,
+                        RoundingMode.HALF_UP
+                ).doubleValue();
+        double upSpeed = BigDecimal.valueOf(txBytes)
+                .add(BigDecimal.valueOf(lastTimeTxBytes).negate())
+                .multiply(BigDecimal.valueOf(1000))
+                .divide(BigDecimal.valueOf(currTime).add(BigDecimal.valueOf(lastGetSpeedTime).negate()),
+                        64,
+                        RoundingMode.HALF_UP
+                ).doubleValue();
+//        upSpeed = (txBytes - lastTimeTxBytes)*1000 / (currTime - lastGetSpeedTime);
         lastGetSpeedTime = currTime;
         lastTimeRxBytes = rxBytes;
         lastTimeTxBytes = txBytes;
@@ -289,7 +295,7 @@ public final class OsUtils {
 
         Properties props = System.getProperties();
 
-        InetAddress addr = null;
+        InetAddress addr;
         String currentIP = null;
         try {
             addr = InetAddress.getLocalHost();

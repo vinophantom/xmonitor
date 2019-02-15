@@ -164,7 +164,7 @@ const setProcessesTable = function(data) {
         tr.append("<td>" + p.mem + "</td>");
         tr.append("<td>" + p.share + "</td>");
         tr.append("<td>" + p.startTime + "</td>");
-        tr.append("<td><button type='button' class='btn btn-accent btn-pill kill-proc-btn' >结束</button></td>");
+        tr.append("<td><button data-target='#process-modal'data-toggle='modal' type='button' class='btn btn-accent btn-pill kill-proc-btn' >结束</button></td>");
         tbody.append(tr);
     });
     initButton();
@@ -196,12 +196,44 @@ let isNumber = function (val) {
 
 
 const initButton = function() {
-    $(".kill-proc-btn").click(function() {
-        const pid = $(this).parent().parent().data("pid");
-        const pname = $(this).parent().parent().data("name");
-        if(!confirm("确定要结束以下进程？\n " + pname)) return;
-        killProcess(pid);
+    $("#kill-process-btn").click(function() {
+        killProcess($("#modal-body-pid").val());
     });
+    $("#process-modal").on('show.bs.modal', function (event) {
+        const btnThis = $(event.relatedTarget);
+        const pid = btnThis.parent().parent().data("pid");
+        const pname = btnThis.parent().parent().data("name");
+        $(this).find("#modal-body-pname").empty().append(pname);
+        $(this).find("#modal-body-pid").val(pid);
+    });
+
+};
+const alertSuccessMsg = function (msg) {
+    $("#alert-msg").remove();
+    const alert = $("<div id=\"alert-msg\" class=\"alert alert-success alert-dismissible fade show mb-0\" role=\"alert\">\n" +
+        "    <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">\n" +
+        "        <span aria-hidden=\"true\">×</span>\n" +
+        "    </button>\n" +
+        "    <i class=\"fa fa-check mx-2\"></i>\n" +
+        "    <span>\n" +
+        "        <strong>" + msg + "</strong>\n" +
+        "    </span>\n" +
+        "</div>");
+    $("#content-div").prepend(alert);
+};
+
+const alertWarningMsg = function (msg) {
+    $("#alert-msg").remove();
+    const alert = $("<div id=\"alert-msg\" class=\"alert alert-warning alert-dismissible fade show mb-0\" role=\"alert\">\n" +
+        "    <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">\n" +
+        "        <span aria-hidden=\"true\">×</span>\n" +
+        "    </button>\n" +
+        "    <i class=\"fa <i fa-exclamation mx-2\"></i>\n" +
+        "    <span>\n" +
+        "        <strong>" + msg + "</strong>\n" +
+        "    </span>\n" +
+        "</div>");
+    $("#content-div").prepend(alert);
 };
 
 const killProcess = function(pid) {
@@ -211,11 +243,13 @@ const killProcess = function(pid) {
         url: "http://" + currRootUrl + "/process/" + pid,
         dataType: "json",
         success: function (response) {
-            console.log(response);
+            if(response.code === 0)
+                alertSuccessMsg(response.msg);
+            else
+                alertWarningMsg(response.msg);
         }
     });
 };
-
 
 
 $(document).ready(function () {

@@ -134,6 +134,41 @@
         </div>
     </div>
 </div>
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="process-modal" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div>确定要结束以下进程？</div>
+                <div id="modal-body-pname"></div>
+                <input type="hidden" id="modal-body-pid" value=""/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button id="kill-process-btn" type="button" data-dismiss="modal" class="btn btn-primary">确定</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+    <!-- 按钮触发模态框 -->
+    <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+        开始演示模态框
+    </button>
 
+    <!--<div class="promo-popup animated">-->
+    <!--<div class="pp-intro-bar"> Need More Templates?-->
+        <!--<span class="close">-->
+          <!--<i class="material-icons">close</i>-->
+        <!--</span>-->
+        <!--<span class="up">-->
+          <!--<i class="material-icons">keyboard_arrow_up</i>-->
+        <!--</span>-->
+    <!--</div>-->
+    <!--<div class="pp-inner-content">-->
+        <!--<h2>Shards Dashboard Pro</h2>-->
+        <!--<p>A premium & modern Bootstrap 4 admin dashboard template pack.</p>-->
+        <!--<a class="pp-cta extra-action" href="http://bit.ly/shards-dashboard-pro">Download</a>-->
+    <!--</div>-->
+<!--</div>-->
 
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="/scripts/app/process.1.1.0.js"></script>
