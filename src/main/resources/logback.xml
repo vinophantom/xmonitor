@@ -7,7 +7,7 @@
 
     <!--定义日志文件的存储地址和前缀名 -->
     <property name="LOG_HOME" value="logs" />
-    <property name="LOG_PREFIX" value="zuul-gateway" />
+    <property name="LOG_PREFIX" value="vino-xmonitor" />
 
     <!-- 一般信息按照每天生成日志文件 -->
     <appender name="INFO_FILE"
