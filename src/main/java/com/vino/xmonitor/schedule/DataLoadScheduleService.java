@@ -21,12 +21,10 @@ public class DataLoadScheduleService {
     private final static long THREE_SECOND = 3000L;
 
 
-    private final CpuService cpuService;
     private final NetService netService;
 
     @Autowired
-    public DataLoadScheduleService(CpuService cpuService, NetService netService) {
-        this.cpuService = cpuService;
+    public DataLoadScheduleService(NetService netService) {
         this.netService = netService;
     }
 //

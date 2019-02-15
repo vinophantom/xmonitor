@@ -29,7 +29,8 @@ public class CircularLinkedList<T> {
         if (header.next == header) {
             header.next = e;
             e.next = header;
-        } else{//不是第一次插入元素
+        } else{
+            //不是第一次插入元素
             //temp引用在栈中，temp和header引用都指向堆中的initList()中new的CircularLinkedElement<T>对象
             CircularLinkedElement<T> temp = header;
             //寻找最后一个元素
@@ -107,18 +108,4 @@ public class CircularLinkedList<T> {
         }
         return false;
     }
-    /**
-     * 打印链表
-     * */
-//    void print()
-//    {
-//        System.out.print("打印链表：");
-//        CircularLinkedElement<T> temp =header;
-//        while(temp.next!=header)
-//        {
-//            temp=temp.next;
-//            System.out.print(temp.value+"\t");
-//        }
-//        System.out.println();
-//    }
 }
