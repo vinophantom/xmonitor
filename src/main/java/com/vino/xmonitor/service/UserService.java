@@ -1,6 +1,7 @@
 package com.vino.xmonitor.service;
 
 import com.vino.xmonitor.bean.XUser;
+import com.vino.xmonitor.cache.CacheHelper;
 import com.vino.xmonitor.exception.GlobalException;
 import com.vino.xmonitor.mapper.XUserMapper;
 import com.vino.xmonitor.result.CodeMsg;
@@ -22,8 +23,9 @@ public class UserService {
 
     private final XUserMapper userMapper;
 
+    public static final int LOGIN_AGE = 3600 * 24 *2;
 
-    private static final String COOKIE_NAME_TOKEN = "token";
+    public static final String COOKIE_NAME_TOKEN = "token";
 
     @Autowired
     public UserService(XUserMapper userMapper) {
@@ -38,6 +40,15 @@ public class UserService {
 
         //TODO 取数据库
         XUser user = userMapper.getById(id);
+        //TODO 再存入缓存
+
+        return user;
+    }
+
+    private XUser getByUsername(String username) {
+
+        //TODO 取数据库
+        XUser user = userMapper.getByUsername(username);
         //TODO 再存入缓存
 
         return user;
@@ -63,24 +74,29 @@ public class UserService {
         if (loginVo == null) {
             throw new GlobalException(CodeMsg.SERVER_ERROR);
         }
-        String mobile = loginVo.getMobile();
+        String username = loginVo.getUsername();
         String formPass = loginVo.getPassword();
         //判断手机号是否存在
-        XUser user = getById(Long.parseLong(mobile));
+        XUser user = getByUsername(username);
         if (user == null) {
-            throw new GlobalException(CodeMsg.MOBILE_NOT_EXIST);
+            throw new GlobalException(CodeMsg.USERNAME_NOT_EXIST);
         }
         //验证密码
         String dbPass = user.getPassword();
         String saltDB = user.getSalt();
-        String calcPass = MD5Util.formPassToDBPass(formPass, saltDB);
+        String calcPass = MD5Util.inputPassToDbPass(formPass, saltDB);
         if (!calcPass.equals(dbPass)) {
             throw new GlobalException(CodeMsg.PASSWORD_ERROR);
         }
         //生成唯一id作为token
         String token = UUIDUtil.uuid();
         addCookie(response, token, user);
+        CacheHelper.saveToLoginCache(token, user);
         return token;
+    }
+
+    public void logout(HttpServletResponse response) {
+        removeCookie(response);
     }
 
     /**
@@ -89,8 +105,15 @@ public class UserService {
      */
     private void addCookie(HttpServletResponse response, String token, XUser user) {
         Cookie cookie = new Cookie(COOKIE_NAME_TOKEN, token);
-        cookie.setMaxAge(3600*24 *2);
+        cookie.setMaxAge(LOGIN_AGE);
         // 设置为网站根目录
+        cookie.setPath("/");
+        response.addCookie(cookie);
+    }
+
+    private void removeCookie(HttpServletResponse response) {
+        Cookie cookie = new Cookie(COOKIE_NAME_TOKEN, null);
+        cookie.setMaxAge(0);
         cookie.setPath("/");
         response.addCookie(cookie);
     }

@@ -11,7 +11,6 @@ import com.vino.xmonitor.result.CodeMsg;
  * 自定义全局异常类
  */
 public class GlobalException extends RuntimeException {
-
     private CodeMsg codeMsg;
 
     public GlobalException(CodeMsg codeMsg) {

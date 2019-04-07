@@ -118,7 +118,7 @@ public class SigarHolder {
      * 获取Sigar实例
      * @return
      */
-    static Sigar getSigarInstance() {
+    public static Sigar getSigarInstance() {
         return (Sigar) temp.next().value();
     }
 

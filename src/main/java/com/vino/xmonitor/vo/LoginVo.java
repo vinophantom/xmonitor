@@ -13,17 +13,17 @@ public class LoginVo {
 
     @NotNull
     //@IsMobile  //因为框架没有校验手机格式注解，所以自己定义
-    private String mobile;
+    private String username;
 
     @NotNull
     private String password;
 
-    public String getMobile() {
-        return mobile;
+    public String getUsername() {
+        return username;
     }
 
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -37,7 +37,7 @@ public class LoginVo {
     @Override
     public String toString() {
         return "LoginVo{" +
-                "mobile='" + mobile + '\'' +
+                "username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 '}';
     }

@@ -17,6 +17,10 @@ public interface XUserMapper {
     @Select("select * from x_user where id = #{id}")
     public XUser getById(@Param("id") long id);
 
+    @Select("select * from x_user where username = #{username}")
+    public XUser getByUsername(@Param("username") String username);
+
+
     @Update("update x_user set password = #{password} where id = #{id}")
     public void update(XUser toBeUpdate);
 

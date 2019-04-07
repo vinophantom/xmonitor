@@ -5,6 +5,7 @@
 
 window.monitorCache = {};
 window.intervals = {};
+
 ////////////////////////////////////////全局变量////////////////////////////////
 /**
  * 当前根地址
@@ -16,6 +17,8 @@ const currRootUrl = window.location.host;
  * @type {string}
  */
 const dataWebSocketUrl = 'ws://' + currRootUrl + '/data';
+
+var storage_select = 'total';
 /**
  * 图标颜色的封装
  * @type {{red: string, orange: string, green: string, blue: string, yellow: string, purple: string, grey: string}}
@@ -337,10 +340,12 @@ let setStoragesData = function (data) {
     window.monitorCache.storages.total.used = totalUsedStorage;
     window.monitorCache.storages.total.free = totalStorage - totalUsedStorage;
     window.monitorCache.storages.total.usePercent = (totalUsedStorage / totalStorage);
-    updateStorageChart('total');
+    // updateStorageChart('total');
+    select.val(storage_select);
+    updateStorageChart(storage_select);
     select.change(function () {
         updateStorageChart(select.val());
-    })
+    });
 };
 
 /**
@@ -794,6 +799,7 @@ let initCharts = function (sysInfo) {
 let initChartInfo = function () {
     sendStoragesRequest();
     $("#refresh-storage").click(function () {
+        storage_select = $("#storage-select").val();
         sendStoragesRequest();
     });
 };
