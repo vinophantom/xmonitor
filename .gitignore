@@ -10,4 +10,6 @@
 hs_err*.log
 *.iml
 *.class
+/sigar
+
 
