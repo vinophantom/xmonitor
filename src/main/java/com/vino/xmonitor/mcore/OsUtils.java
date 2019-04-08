@@ -161,13 +161,13 @@ public final class OsUtils {
 
         // info：名字
         String cmd = ProcUtil.getDescription(sigar, pid);
-        String[] args = StringUtils.split(cmd," ");
+        String[] args = StringUtils.split(cmd,"--");
         if (0 != Objects.requireNonNull(args).length){
-            p.setName(args[0]);
-        } else {
-            int i = cmd.indexOf("--");
-            p.setName(cmd.substring(0, i == -1 ? cmd.length() : i));
+            cmd = args[0];
         }
+        int j;
+        int i = (j=cmd.lastIndexOf("/"))<0 ? cmd.lastIndexOf("\\") : j;
+        p.setName(cmd.substring(i + 1));
         p.setCmd(cmd);
         try {
             double cpuUsage = sigar.getProcCpu(pid).getPercent();

@@ -237,7 +237,7 @@ const alertWarningMsg = function (msg) {
 };
 
 const killProcess = function(pid) {
-
+    $(".alert").remove();
     $.ajax({
         type: "delete",
         url: "http://" + currRootUrl + "/process/" + pid,
