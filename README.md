@@ -14,7 +14,7 @@ JS  | [jQuery](https://jquery.com/)
 
 MVC | [SpringBoot](http://spring.io/projects/spring-boot)
 
-SpringBoot + Thymeleaf + BootStrap + Guava + Lomback
+SpringBoot + Thymeleaf + BootStrap + Guava + Lombok
 
 
 ## Preview
